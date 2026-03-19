@@ -261,10 +261,16 @@
         .list-container { position: relative; min-height: 50px; }
         .line-item { 
             font-size: 13px; color: var(--lime); display: flex; justify-content: space-between; align-items: center;
-            padding: 4px 0; border-bottom: 1px dotted rgba(255,255,255,0.05); 
+            padding: 6px 8px; /* 增加内边距让边框更明显 */
+            border: 1px solid #ffca00; /* 添加金色边框 */
+            border-radius: 4px;
+            margin-bottom: 4px;
+            background: rgba(0,0,0,0.2);
             transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             max-height: 40px;
-            opacity: 1; overflow: hidden; transform-origin: top;
+            opacity: 1; 
+            overflow: hidden; 
+            transform-origin: top;
         }
         .line-item .item-left {
             display: flex;
@@ -275,21 +281,25 @@
             width: 18px;
             height: 18px;
             object-fit: contain;
+            transition: filter 0.3s; /* 图标变色过渡 */
         }
         .line-enter-left { animation: slideInLeft 0.5s forwards; }
         .line-enter-right { animation: slideInRight 0.5s forwards; }
         .line-removing {
             color: #ff4444 !important;
+            border-color: #ff4444 !important; /* 边框变红 */
             text-decoration: line-through;
-            opacity: 1;
-            max-height: 40px;
+        }
+        .line-removing .item-left img {
+            filter: brightness(0) saturate(100%) invert(22%) sepia(99%) saturate(7482%) hue-rotate(0deg) brightness(98%) contrast(112%); /* 红色滤镜 */
         }
         .line-exit { 
             opacity: 0 !important; 
             max-height: 0 !important; 
             padding-top: 0 !important; 
             padding-bottom: 0 !important; 
-            border-bottom-color: transparent !important;
+            border: none !important; /* 移除边框 */
+            margin-bottom: 0 !important;
             pointer-events: none;
         }
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
@@ -304,7 +314,7 @@
             margin-right: 8px; 
             top: -2px;
             font-size: 12px; font-weight: bold; pointer-events: none; 
-            animation: floatUp 1.2s ease-out forwards; /* 延长动画时间至1.2s */
+            animation: floatUp 1.2s ease-out 0.5s forwards; /* 延迟0.5s后开始移动 */
             z-index: 10; 
             text-shadow: 1px 1px 2px #000; white-space: nowrap;
         }
@@ -312,14 +322,14 @@
         .delta-neg { color: #ff4444; }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-20px) scale(1.2); } /* 稍微调高移动距离 */
+            100% { opacity: 0; transform: translateY(-20px) scale(1.2); }
         }
         .empty-tip { color: #666; font-size: 12px; padding: 4px 0; }
     </style>
 </head>
 <body>
 <div class="calc-card">
-    <div class="version-tag" id="version-tag">v22</div>
+    <div class="version-tag" id="version-tag">v23</div>
     <div class="title">🧪 寂月的药水工坊</div>
     <div class="control-panel">
         <div class="mode-row">
@@ -364,7 +374,7 @@
 <script>
 (function() {
     // ==================== 版本号 ====================
-    const VERSION = 'v22';
+    const VERSION = 'v23';
     document.getElementById('version-tag').innerText = VERSION;
 
     // ==================== 材料图标映射 ====================
@@ -376,14 +386,13 @@
         "月光草": "Moonglow.png",
         "发光蘑菇": "Glowing_Mushroom.png",
         "火焰花": "Fireblossom.png",
-        "闪耀根": "Shiverthorn.png", // 示例
+        "闪耀根": "Shiverthorn.png",
         "寒颤棘": "Shiverthorn.png",
         "水叶草": "Waterleaf.png",
         "珊瑚": "Coral.png",
         "羽毛": "Feather.png",
         "瓢虫": "Ladybug.png",
         "黑珍珠": "Black_Pearl.png",
-        // 可以继续添加
     };
 
     // 基础图片URL
@@ -500,7 +509,7 @@
     const collapseAllBtn = document.getElementById('collapse-all');
 
     let fadeTimer = null;
-    let removeTimer = null; // 用于材料删除动画
+    let removeTimeouts = []; // 用于存储删除超时
 
     // ==================== 解析 ====================
     function parseHierarchy(nodes, parentPath = []) {
@@ -952,22 +961,29 @@
         lastMats = {...newMats};
     }
 
-    // 修改后的 smartUpdate，支持两步删除动画
+    // 修改后的 smartUpdate，支持两步删除动画和依次删除
     function smartUpdate(container, newData, oldData, formatKey, formatVal) {
+        // 清除所有之前的删除超时
+        removeTimeouts.forEach(id => clearTimeout(id));
+        removeTimeouts = [];
+
         if (Object.keys(newData).length === 0) {
             const items = container.querySelectorAll('.line-item');
             if (items.length > 0) {
-                items.forEach(el => { 
-                    el.classList.add('line-removing');
-                    setTimeout(() => {
-                        el.classList.add('line-exit');
-                        setTimeout(() => el.remove(), 500);
-                    }, 300);
+                items.forEach((el, index) => {
+                    const timeout = setTimeout(() => {
+                        el.classList.add('line-removing');
+                        setTimeout(() => {
+                            el.classList.add('line-exit');
+                            setTimeout(() => el.remove(), 500);
+                        }, 300);
+                    }, index * 300); // 依次删除
+                    removeTimeouts.push(timeout);
                 });
                 setTimeout(() => { 
                     if (container.children.length === 0) 
                         container.innerHTML = '<div class="empty-tip">未点选药水</div>'; 
-                }, 800);
+                }, items.length * 300 + 800);
             } else {
                 if (!container.querySelector('.empty-tip')) container.innerHTML = '<div class="empty-tip">未点选药水</div>';
             }
@@ -976,20 +992,31 @@
         const emptyTip = container.querySelector('.empty-tip');
         if (emptyTip) emptyTip.remove();
 
-        // 处理退出条目：先变红+删除线，再消失
+        // 收集要删除的元素
+        const removeList = [];
         for (let k in oldData) {
             if (!(k in newData)) {
                 const safeId = escapeKey(k);
                 const el = container.querySelector(`[data-key="${safeId}"]`);
                 if (el) {
-                    el.classList.add('line-removing');
-                    setTimeout(() => {
-                        el.classList.add('line-exit');
-                        setTimeout(() => el.remove(), 500);
-                    }, 300);
+                    removeList.push(el);
                 }
             }
         }
+
+        // 依次删除（每个延迟递增 300ms）
+        removeList.forEach((el, index) => {
+            const timeout = setTimeout(() => {
+                el.classList.add('line-removing');
+                setTimeout(() => {
+                    el.classList.add('line-exit');
+                    setTimeout(() => {
+                        el.remove();
+                    }, 500);
+                }, 300);
+            }, index * 300);
+            removeTimeouts.push(timeout);
+        });
 
         // 新增/更新条目
         let enterIndex = 0;
@@ -1000,7 +1027,7 @@
             let el = container.querySelector(`[data-key="${safeId}"]`);
 
             if (oldVal === undefined) {
-                if (el) el.remove(); // 移除残留（可能处于删除中）
+                if (el) el.remove();
                 el = document.createElement('div');
                 el.className = `line-item ${enterIndex % 2 === 0 ? 'line-enter-left' : 'line-enter-right'}`;
                 el.setAttribute('data-key', safeId);
@@ -1022,7 +1049,7 @@
                     deltaEl.className = `delta-pop ${delta > 0 ? 'delta-pos' : 'delta-neg'}`;
                     deltaEl.innerText = (delta > 0 ? '+' : '') + delta;
                     valContainer.appendChild(deltaEl);
-                    setTimeout(() => deltaEl.remove(), 1200); // 延长至1.2s
+                    setTimeout(() => deltaEl.remove(), 1200); // 与动画时长一致
                 }
             }
         }
