@@ -261,8 +261,8 @@
         .list-container { position: relative; min-height: 50px; }
         .line-item { 
             font-size: 13px; color: var(--lime); display: flex; justify-content: space-between; align-items: center;
-            padding: 6px 8px; /* 增加内边距让边框更明显 */
-            border: 1px solid #ffca00; /* 添加金色边框 */
+            padding: 6px 8px;
+            border: 1px solid #ffca00;
             border-radius: 4px;
             margin-bottom: 4px;
             background: rgba(0,0,0,0.2);
@@ -281,24 +281,24 @@
             width: 18px;
             height: 18px;
             object-fit: contain;
-            transition: filter 0.3s; /* 图标变色过渡 */
+            transition: filter 0.3s;
         }
         .line-enter-left { animation: slideInLeft 0.5s forwards; }
         .line-enter-right { animation: slideInRight 0.5s forwards; }
         .line-removing {
             color: #ff4444 !important;
-            border-color: #ff4444 !important; /* 边框变红 */
+            border-color: #ff4444 !important;
             text-decoration: line-through;
         }
         .line-removing .item-left img {
-            filter: brightness(0) saturate(100%) invert(22%) sepia(99%) saturate(7482%) hue-rotate(0deg) brightness(98%) contrast(112%); /* 红色滤镜 */
+            filter: brightness(0) saturate(100%) invert(22%) sepia(99%) saturate(7482%) hue-rotate(0deg) brightness(98%) contrast(112%);
         }
         .line-exit { 
             opacity: 0 !important; 
             max-height: 0 !important; 
             padding-top: 0 !important; 
             padding-bottom: 0 !important; 
-            border: none !important; /* 移除边框 */
+            border: none !important;
             margin-bottom: 0 !important;
             pointer-events: none;
         }
@@ -314,7 +314,7 @@
             margin-right: 8px; 
             top: -2px;
             font-size: 12px; font-weight: bold; pointer-events: none; 
-            animation: floatUp 1.2s ease-out 0.5s forwards; /* 延迟0.5s后开始移动 */
+            animation: floatUp 1.2s ease-out 0.5s forwards;
             z-index: 10; 
             text-shadow: 1px 1px 2px #000; white-space: nowrap;
         }
@@ -329,7 +329,7 @@
 </head>
 <body>
 <div class="calc-card">
-    <div class="version-tag" id="version-tag">v23</div>
+    <div class="version-tag" id="version-tag">v25</div>
     <div class="title">🧪 寂月的药水工坊</div>
     <div class="control-panel">
         <div class="mode-row">
@@ -374,12 +374,12 @@
 <script>
 (function() {
     // ==================== 版本号 ====================
-    const VERSION = 'v23';
+    const VERSION = 'v25';
     document.getElementById('version-tag').innerText = VERSION;
 
     // ==================== 材料图标映射 ====================
     const materialIcons = {
-        "瓶装水": "Bottle.png", // 示例图标名，实际需替换
+        "瓶装水": "Bottle.png",
         "太阳花": "Daybloom.png",
         "铁矿": "Iron_Ore.png",
         "死亡草": "Deathweed.png",
@@ -509,7 +509,6 @@
     const collapseAllBtn = document.getElementById('collapse-all');
 
     let fadeTimer = null;
-    let removeTimeouts = []; // 用于存储删除超时
 
     // ==================== 解析 ====================
     function parseHierarchy(nodes, parentPath = []) {
@@ -564,7 +563,6 @@
         return `rgb(${r}, ${g}, ${b})`;
     }
 
-    // 更新分类复选框状态（递归）
     function updateCategoryCheckState(catNode) {
         const allIds = [];
         function collect(node) {
@@ -597,7 +595,6 @@
         updateGlobalCheckbox();
     }
 
-    // 更新全局复选框状态
     function updateGlobalCheckbox() {
         const totalCount = flatPotions.length;
         if (totalCount === 0) {
@@ -644,17 +641,14 @@
         if (checked) ids.forEach(id => activePotionIds.add(id));
         else ids.forEach(id => activePotionIds.delete(id));
         refreshCategoryTreeState();
-        // 更新所有卡片的active类
         document.querySelectorAll('.potion-item').forEach(card => {
             const id = card.dataset.id;
             card.classList.toggle('active', activePotionIds.has(id));
         });
-        // 更新所有分类复选框状态
         updateCheckboxesFromTree();
         doCalc();
     }
 
-    // 遍历DOM树，根据categoryTree设置复选框状态
     function updateCheckboxesFromTree() {
         const checkboxes = document.querySelectorAll('.category-checkbox');
         checkboxes.forEach(cb => {
@@ -690,7 +684,6 @@
             return false;
         }
         find(categoryTree);
-        // 只更新受影响节点的expanded类，而不重新渲染整个列表
         const nodeDiv = document.querySelector(`.category-node[data-id="${catId}"]`);
         if (nodeDiv) {
             nodeDiv.classList.toggle('expanded', findCategoryNode(categoryTree, catId).expanded);
@@ -718,7 +711,6 @@
         `;
     }
 
-    // 初次渲染整个列表
     function renderCategoryList() {
         function renderNode(node, depth) {
             const hasChildren = node.children.length > 0;
@@ -746,7 +738,6 @@
 
         categoryListEl.innerHTML = categoryTree.map(root => renderNode(root, 0)).join('');
 
-        // 绑定复选框事件
         document.querySelectorAll('.category-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
@@ -754,7 +745,6 @@
             });
         });
 
-        // 绑定展开/折叠事件
         document.querySelectorAll('.category-header').forEach(header => {
             header.addEventListener('click', (e) => {
                 if (e.target.classList.contains('category-checkbox')) return;
@@ -763,7 +753,6 @@
             });
         });
 
-        // 绑定卡片点击
         document.querySelectorAll('.potion-item').forEach(card => {
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -773,18 +762,14 @@
                 } else {
                     activePotionIds.add(id);
                 }
-                // 切换卡片 active 类
                 card.classList.toggle('active');
-                // 更新分类树状态
                 refreshCategoryTreeState();
-                // 更新所有复选框状态
                 updateCheckboxesFromTree();
                 doCalc();
             });
         });
     }
 
-    // ==================== 初始化数据 ====================
     function initData() {
         flatPotions = parseHierarchy(potionHierarchy);
         categoryTree = buildCategoryTree(potionHierarchy, 0);
@@ -792,7 +777,6 @@
         refreshCategoryTreeState();
     }
 
-    // ==================== 全局全选功能 ====================
     function toggleGlobalSelect(checked) {
         if (checked) {
             flatPotions.forEach(p => activePotionIds.add(p.id));
@@ -800,17 +784,14 @@
             activePotionIds.clear();
         }
         refreshCategoryTreeState();
-        // 更新所有卡片
         document.querySelectorAll('.potion-item').forEach(card => {
             const id = card.dataset.id;
             card.classList.toggle('active', activePotionIds.has(id));
         });
-        // 更新所有分类复选框
         updateCheckboxesFromTree();
         doCalc();
     }
 
-    // ==================== 全展开/全收起 ====================
     function expandAll() {
         function setExpanded(nodes, expanded) {
             nodes.forEach(node => {
@@ -845,7 +826,6 @@
         });
     }
 
-    // ==================== 其他功能 ====================
     function handleWheel(e) {
         e.preventDefault();
         if (document.activeElement !== globalInput) return;
@@ -946,39 +926,52 @@
         });
 
         totalInfo.innerText = totalB > 0 ? `(共 ${totalB} 瓶)` : '';
+        // 制作清单：无材料特效
         smartUpdate(bottleOutput, newBottles, lastBottles, 
             k => `<span class="item-left">${k}</span>`, 
-            v => v + ' 瓶'
+            v => v + ' 瓶',
+            false
         );
+        // 材料清单：有材料特效
         smartUpdate(matOutput, newMats, lastMats, 
             k => {
                 const icon = materialIcons[k] ? `<img src="${IMG_BASE_URL}${materialIcons[k]}" alt="">` : '';
                 return `<span class="item-left">${icon}${k}</span>`;
             }, 
-            v => "×" + v
+            v => "×" + v,
+            true
         );
         lastBottles = {...newBottles};
         lastMats = {...newMats};
     }
 
-    // 修改后的 smartUpdate，支持两步删除动画和依次删除
-    function smartUpdate(container, newData, oldData, formatKey, formatVal) {
-        // 清除所有之前的删除超时
-        removeTimeouts.forEach(id => clearTimeout(id));
-        removeTimeouts = [];
-
+    // 增强的 smartUpdate，每个元素独立管理超时
+    function smartUpdate(container, newData, oldData, formatKey, formatVal, hasMaterialEffect = false) {
+        // 处理空数据情况
         if (Object.keys(newData).length === 0) {
             const items = container.querySelectorAll('.line-item');
             if (items.length > 0) {
                 items.forEach((el, index) => {
+                    // 清除元素上可能存在的旧超时
+                    if (el._removeTimeout) clearTimeout(el._removeTimeout);
                     const timeout = setTimeout(() => {
-                        el.classList.add('line-removing');
-                        setTimeout(() => {
+                        if (hasMaterialEffect) {
+                            el.classList.add('line-removing');
+                            setTimeout(() => {
+                                el.classList.add('line-exit');
+                                setTimeout(() => {
+                                    if (el.parentNode) el.remove();
+                                }, 500);
+                            }, 300);
+                        } else {
                             el.classList.add('line-exit');
-                            setTimeout(() => el.remove(), 500);
-                        }, 300);
-                    }, index * 300); // 依次删除
-                    removeTimeouts.push(timeout);
+                            setTimeout(() => {
+                                if (el.parentNode) el.remove();
+                            }, 500);
+                        }
+                        el._removeTimeout = null;
+                    }, index * 300);
+                    el._removeTimeout = timeout;
                 });
                 setTimeout(() => { 
                     if (container.children.length === 0) 
@@ -992,33 +985,94 @@
         const emptyTip = container.querySelector('.empty-tip');
         if (emptyTip) emptyTip.remove();
 
-        // 收集要删除的元素
-        const removeList = [];
+        // 处理需要删除的条目（存在于 oldData 但不在 newData）
         for (let k in oldData) {
             if (!(k in newData)) {
                 const safeId = escapeKey(k);
                 const el = container.querySelector(`[data-key="${safeId}"]`);
                 if (el) {
-                    removeList.push(el);
+                    // 清除该元素上可能正在进行的删除超时
+                    if (el._removeTimeout) clearTimeout(el._removeTimeout);
+                    // 设置新的删除超时（立即开始，但可顺序延迟，这里使用0延迟，因为我们需要依次删除，但为了简单，我们让它们依次开始）
+                    // 为了依次删除，我们仍然需要索引，但这里无法获取索引，所以统一延迟0？不行，我们需要保持顺序。
+                    // 改为：在循环外我们已经知道要删除的元素列表，但循环内无法获取索引。因此先收集要删除的元素，再统一处理。
+                    // 但这里是在循环内，无法预知顺序。为了简单，我们重新设计：先收集所有要删除的元素，再依次处理。
+                    // 但为了保持代码简洁，我们采用另一种方式：在进入函数时收集删除列表，但这里已经是遍历 oldData，我们可以先把所有要删除的元素存到一个数组，但需要修改函数结构。
+                    // 由于时间关系，我们采用一个临时方案：为每个删除设置一个短延迟，但顺序可能不完美，但至少会删除。
                 }
             }
         }
 
-        // 依次删除（每个延迟递增 300ms）
-        removeList.forEach((el, index) => {
+        // 由于上述问题，我们重构该函数：先收集要删除的元素，再统一处理。
+        // 但为了不重写整个函数，我们保留之前的逻辑，但修改删除部分的实现。
+        // 实际上更好的做法是：在函数开头先收集所有要删除的元素，然后依次设置超时。
+        // 我们重新实现 smartUpdate 如下：
+
+        // 我们重新编写函数，先处理删除，再处理新增/更新。
+
+        // 注意：下面是一个完整的重写，确保删除正确。
+    }
+
+    // 为了避免混乱，我们直接重写整个 smartUpdate 函数，确保删除正确且独立管理超时。
+    // 以下是最终版本：
+
+    function smartUpdate(container, newData, oldData, formatKey, formatVal, hasMaterialEffect = false) {
+        // 清除容器内所有即将删除的元素的超时（但保留现有元素）
+        // 我们先收集要删除的元素
+        const toRemove = [];
+        for (let k in oldData) {
+            if (!(k in newData)) {
+                const safeId = escapeKey(k);
+                const el = container.querySelector(`[data-key="${safeId}"]`);
+                if (el) toRemove.push(el);
+            }
+        }
+
+        // 处理空数据情况
+        if (Object.keys(newData).length === 0 && toRemove.length === 0) {
+            // 无数据且无删除项，显示空提示
+            if (!container.querySelector('.empty-tip')) {
+                container.innerHTML = '<div class="empty-tip">未点选药水</div>';
+            }
+            return;
+        }
+
+        // 移除空提示
+        const emptyTip = container.querySelector('.empty-tip');
+        if (emptyTip) emptyTip.remove();
+
+        // 依次删除 toRemove 中的元素
+        toRemove.forEach((el, index) => {
+            // 清除元素上已有的超时
+            if (el._removeTimeout) clearTimeout(el._removeTimeout);
             const timeout = setTimeout(() => {
-                el.classList.add('line-removing');
-                setTimeout(() => {
+                if (hasMaterialEffect) {
+                    el.classList.add('line-removing');
+                    setTimeout(() => {
+                        el.classList.add('line-exit');
+                        setTimeout(() => {
+                            if (el.parentNode) el.remove();
+                            // 如果删除后容器为空，显示空提示
+                            if (container.children.length === 0) {
+                                container.innerHTML = '<div class="empty-tip">未点选药水</div>';
+                            }
+                        }, 500);
+                    }, 300);
+                } else {
                     el.classList.add('line-exit');
                     setTimeout(() => {
-                        el.remove();
+                        if (el.parentNode) el.remove();
+                        if (container.children.length === 0) {
+                            container.innerHTML = '<div class="empty-tip">未点选药水</div>';
+                        }
                     }, 500);
-                }, 300);
-            }, index * 300);
-            removeTimeouts.push(timeout);
+                }
+                el._removeTimeout = null;
+            }, index * 300); // 每个延迟递增，依次消失
+            el._removeTimeout = timeout;
         });
 
-        // 新增/更新条目
+        // 处理新增和更新
         let enterIndex = 0;
         for (let k in newData) {
             const newVal = newData[k];
@@ -1027,7 +1081,12 @@
             let el = container.querySelector(`[data-key="${safeId}"]`);
 
             if (oldVal === undefined) {
-                if (el) el.remove();
+                // 新增条目
+                if (el) {
+                    // 如果存在旧元素（可能正在删除），先清除其超时并移除
+                    if (el._removeTimeout) clearTimeout(el._removeTimeout);
+                    el.remove();
+                }
                 el = document.createElement('div');
                 el.className = `line-item ${enterIndex % 2 === 0 ? 'line-enter-left' : 'line-enter-right'}`;
                 el.setAttribute('data-key', safeId);
@@ -1035,8 +1094,13 @@
                 container.appendChild(el);
                 enterIndex++;
             } else if (newVal !== oldVal) {
+                // 更新数值
                 if (el) {
-                    // 如果处于删除中，先移除删除相关类
+                    // 如果元素正在删除，先取消删除
+                    if (el._removeTimeout) {
+                        clearTimeout(el._removeTimeout);
+                        el._removeTimeout = null;
+                    }
                     el.classList.remove('line-removing', 'line-exit');
                     const valContainer = el.querySelector('.val-container');
                     const valText = el.querySelector('.val-text');
@@ -1049,7 +1113,7 @@
                     deltaEl.className = `delta-pop ${delta > 0 ? 'delta-pos' : 'delta-neg'}`;
                     deltaEl.innerText = (delta > 0 ? '+' : '') + delta;
                     valContainer.appendChild(deltaEl);
-                    setTimeout(() => deltaEl.remove(), 1200); // 与动画时长一致
+                    setTimeout(() => deltaEl.remove(), 1200);
                 }
             }
         }
@@ -1059,7 +1123,6 @@
         return encodeURIComponent(key).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16));
     }
 
-    // ==================== 启动 ====================
     function init() {
         initData();
         renderCategoryList();
@@ -1067,12 +1130,10 @@
         attachGlobalEvents();
         globalInput.addEventListener('wheel', handleWheel, { passive: false });
 
-        // 全局全选监听
         globalSelect.addEventListener('change', (e) => {
             toggleGlobalSelect(e.target.checked);
         });
 
-        // 全展开/全收起监听
         expandAllBtn.addEventListener('click', expandAll);
         collapseAllBtn.addEventListener('click', collapseAll);
     }
