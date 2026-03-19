@@ -308,28 +308,44 @@
         .val-flash { animation: valueFlash 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         @keyframes valueFlash { 0% { color: #fff; transform: scale(1.4); text-shadow: 0 0 10px #fff; } 100% { color: var(--lime); transform: scale(1); text-shadow: none; } }
         .val-container { position: relative; display: inline-flex; align-items: center; }
+        /* 新的浮动数字动画：先重叠，立即左移，停顿，再左移淡出 */
         .delta-pop { 
             position: absolute; 
-            right: 100%; 
-            margin-right: 8px; 
+            left: 0;                /* 与数值左对齐，实现重叠 */
             top: -2px;
             font-size: 12px; font-weight: bold; pointer-events: none; 
-            animation: floatUp 1.2s ease-out 0.5s forwards;
+            animation: floatMove 1.2s ease-out forwards;
             z-index: 10; 
             text-shadow: 1px 1px 2px #000; white-space: nowrap;
         }
         .delta-pos { color: var(--lime); }
         .delta-neg { color: #ff4444; }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-20px) scale(1.2); }
+
+        @keyframes floatMove {
+            0% {
+                opacity: 1;
+                transform: translateX(0);       /* 起始位置：重叠在数值上 */
+            }
+            20% {
+                transform: translateX(-15px);    /* 快速左移15px，无停顿 */
+                opacity: 1;
+            }
+            60% {
+                transform: translateX(-15px);    /* 停顿位置保持 */
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-35px);    /* 继续左移20px并淡出 */
+                opacity: 0;
+            }
         }
+
         .empty-tip { color: #666; font-size: 12px; padding: 4px 0; }
     </style>
 </head>
 <body>
 <div class="calc-card">
-    <div class="version-tag" id="version-tag">v25</div>
+    <div class="version-tag" id="version-tag">v28</div>
     <div class="title">🧪 寂月的药水工坊</div>
     <div class="control-panel">
         <div class="mode-row">
@@ -374,7 +390,7 @@
 <script>
 (function() {
     // ==================== 版本号 ====================
-    const VERSION = 'v25';
+    const VERSION = 'v28';
     document.getElementById('version-tag').innerText = VERSION;
 
     // ==================== 材料图标映射 ====================
@@ -509,6 +525,7 @@
     const collapseAllBtn = document.getElementById('collapse-all');
 
     let fadeTimer = null;
+    // 采用元素自身存储超时
 
     // ==================== 解析 ====================
     function parseHierarchy(nodes, parentPath = []) {
@@ -926,13 +943,13 @@
         });
 
         totalInfo.innerText = totalB > 0 ? `(共 ${totalB} 瓶)` : '';
-        // 制作清单：无材料特效
+        // 制作清单：启用变红划掉动画
         smartUpdate(bottleOutput, newBottles, lastBottles, 
             k => `<span class="item-left">${k}</span>`, 
             v => v + ' 瓶',
-            false
+            true
         );
-        // 材料清单：有材料特效
+        // 材料清单：启用变红划掉动画
         smartUpdate(matOutput, newMats, lastMats, 
             k => {
                 const icon = materialIcons[k] ? `<img src="${IMG_BASE_URL}${materialIcons[k]}" alt="">` : '';
@@ -945,15 +962,17 @@
         lastMats = {...newMats};
     }
 
-    // 增强的 smartUpdate，每个元素独立管理超时
-    function smartUpdate(container, newData, oldData, formatKey, formatVal, hasMaterialEffect = false) {
-        // 处理空数据情况
+    // 增强的 smartUpdate，接受 hasMaterialEffect 参数
+    function smartUpdate(container, newData, oldData, formatKey, formatVal, hasMaterialEffect = true) {
+        // 处理空数据
         if (Object.keys(newData).length === 0) {
             const items = container.querySelectorAll('.line-item');
             if (items.length > 0) {
                 items.forEach((el, index) => {
                     // 清除元素上可能存在的旧超时
-                    if (el._removeTimeout) clearTimeout(el._removeTimeout);
+                    if (el.dataset.removeTimeout) {
+                        clearTimeout(parseInt(el.dataset.removeTimeout));
+                    }
                     const timeout = setTimeout(() => {
                         if (hasMaterialEffect) {
                             el.classList.add('line-removing');
@@ -969,9 +988,9 @@
                                 if (el.parentNode) el.remove();
                             }, 500);
                         }
-                        el._removeTimeout = null;
+                        delete el.dataset.removeTimeout;
                     }, index * 300);
-                    el._removeTimeout = timeout;
+                    el.dataset.removeTimeout = timeout;
                 });
                 setTimeout(() => { 
                     if (container.children.length === 0) 
@@ -985,66 +1004,24 @@
         const emptyTip = container.querySelector('.empty-tip');
         if (emptyTip) emptyTip.remove();
 
-        // 处理需要删除的条目（存在于 oldData 但不在 newData）
+        // 收集要删除的元素
+        const removeList = [];
         for (let k in oldData) {
             if (!(k in newData)) {
                 const safeId = escapeKey(k);
                 const el = container.querySelector(`[data-key="${safeId}"]`);
                 if (el) {
-                    // 清除该元素上可能正在进行的删除超时
-                    if (el._removeTimeout) clearTimeout(el._removeTimeout);
-                    // 设置新的删除超时（立即开始，但可顺序延迟，这里使用0延迟，因为我们需要依次删除，但为了简单，我们让它们依次开始）
-                    // 为了依次删除，我们仍然需要索引，但这里无法获取索引，所以统一延迟0？不行，我们需要保持顺序。
-                    // 改为：在循环外我们已经知道要删除的元素列表，但循环内无法获取索引。因此先收集要删除的元素，再统一处理。
-                    // 但这里是在循环内，无法预知顺序。为了简单，我们重新设计：先收集所有要删除的元素，再依次处理。
-                    // 但为了保持代码简洁，我们采用另一种方式：在进入函数时收集删除列表，但这里已经是遍历 oldData，我们可以先把所有要删除的元素存到一个数组，但需要修改函数结构。
-                    // 由于时间关系，我们采用一个临时方案：为每个删除设置一个短延迟，但顺序可能不完美，但至少会删除。
+                    removeList.push(el);
                 }
             }
         }
 
-        // 由于上述问题，我们重构该函数：先收集要删除的元素，再统一处理。
-        // 但为了不重写整个函数，我们保留之前的逻辑，但修改删除部分的实现。
-        // 实际上更好的做法是：在函数开头先收集所有要删除的元素，然后依次设置超时。
-        // 我们重新实现 smartUpdate 如下：
-
-        // 我们重新编写函数，先处理删除，再处理新增/更新。
-
-        // 注意：下面是一个完整的重写，确保删除正确。
-    }
-
-    // 为了避免混乱，我们直接重写整个 smartUpdate 函数，确保删除正确且独立管理超时。
-    // 以下是最终版本：
-
-    function smartUpdate(container, newData, oldData, formatKey, formatVal, hasMaterialEffect = false) {
-        // 清除容器内所有即将删除的元素的超时（但保留现有元素）
-        // 我们先收集要删除的元素
-        const toRemove = [];
-        for (let k in oldData) {
-            if (!(k in newData)) {
-                const safeId = escapeKey(k);
-                const el = container.querySelector(`[data-key="${safeId}"]`);
-                if (el) toRemove.push(el);
+        // 依次删除，每个元素独立超时
+        removeList.forEach((el, index) => {
+            // 清除元素上可能存在的旧超时
+            if (el.dataset.removeTimeout) {
+                clearTimeout(parseInt(el.dataset.removeTimeout));
             }
-        }
-
-        // 处理空数据情况
-        if (Object.keys(newData).length === 0 && toRemove.length === 0) {
-            // 无数据且无删除项，显示空提示
-            if (!container.querySelector('.empty-tip')) {
-                container.innerHTML = '<div class="empty-tip">未点选药水</div>';
-            }
-            return;
-        }
-
-        // 移除空提示
-        const emptyTip = container.querySelector('.empty-tip');
-        if (emptyTip) emptyTip.remove();
-
-        // 依次删除 toRemove 中的元素
-        toRemove.forEach((el, index) => {
-            // 清除元素上已有的超时
-            if (el._removeTimeout) clearTimeout(el._removeTimeout);
             const timeout = setTimeout(() => {
                 if (hasMaterialEffect) {
                     el.classList.add('line-removing');
@@ -1052,27 +1029,20 @@
                         el.classList.add('line-exit');
                         setTimeout(() => {
                             if (el.parentNode) el.remove();
-                            // 如果删除后容器为空，显示空提示
-                            if (container.children.length === 0) {
-                                container.innerHTML = '<div class="empty-tip">未点选药水</div>';
-                            }
                         }, 500);
                     }, 300);
                 } else {
                     el.classList.add('line-exit');
                     setTimeout(() => {
                         if (el.parentNode) el.remove();
-                        if (container.children.length === 0) {
-                            container.innerHTML = '<div class="empty-tip">未点选药水</div>';
-                        }
                     }, 500);
                 }
-                el._removeTimeout = null;
-            }, index * 300); // 每个延迟递增，依次消失
-            el._removeTimeout = timeout;
+                delete el.dataset.removeTimeout;
+            }, index * 300);
+            el.dataset.removeTimeout = timeout;
         });
 
-        // 处理新增和更新
+        // 新增/更新条目
         let enterIndex = 0;
         for (let k in newData) {
             const newVal = newData[k];
@@ -1081,10 +1051,11 @@
             let el = container.querySelector(`[data-key="${safeId}"]`);
 
             if (oldVal === undefined) {
-                // 新增条目
+                // 如果存在旧元素（可能正在删除），先清除其超时并移除
                 if (el) {
-                    // 如果存在旧元素（可能正在删除），先清除其超时并移除
-                    if (el._removeTimeout) clearTimeout(el._removeTimeout);
+                    if (el.dataset.removeTimeout) {
+                        clearTimeout(parseInt(el.dataset.removeTimeout));
+                    }
                     el.remove();
                 }
                 el = document.createElement('div');
@@ -1094,12 +1065,11 @@
                 container.appendChild(el);
                 enterIndex++;
             } else if (newVal !== oldVal) {
-                // 更新数值
                 if (el) {
-                    // 如果元素正在删除，先取消删除
-                    if (el._removeTimeout) {
-                        clearTimeout(el._removeTimeout);
-                        el._removeTimeout = null;
+                    // 如果处于删除中，先移除删除相关类和超时
+                    if (el.dataset.removeTimeout) {
+                        clearTimeout(parseInt(el.dataset.removeTimeout));
+                        delete el.dataset.removeTimeout;
                     }
                     el.classList.remove('line-removing', 'line-exit');
                     const valContainer = el.querySelector('.val-container');
@@ -1113,7 +1083,7 @@
                     deltaEl.className = `delta-pop ${delta > 0 ? 'delta-pos' : 'delta-neg'}`;
                     deltaEl.innerText = (delta > 0 ? '+' : '') + delta;
                     valContainer.appendChild(deltaEl);
-                    setTimeout(() => deltaEl.remove(), 1200);
+                    setTimeout(() => deltaEl.remove(), 1200); // 与动画时长一致
                 }
             }
         }
