@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寂月的药水工坊 · 瀑布流（v16）</title>
+    <style>
+        :root {
+            --bg: #2c1c13; --panel: #1a120c; --border: #7a5a4d; --gold: #ffca00; 
+            --cyan: #00e5ff; --lime: #b5e61d; --text: #fdf6e3; --card-bg: rgba(255, 255, 255, 0.03);
+            --anim-speed: 0.4s;
+        }
+
+        body { background: #1a1a1b; display: flex; justify-content: center; padding: 20px; font-family: sans-serif; color: var(--text); user-select: none; margin: 0; }
+        .calc-card { background: var(--bg); border: 2px solid var(--border); padding: 25px; border-radius: 12px; width: 100%; max-width: 1200px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; }
+
+        /* 版本号标签 */
+        .version-tag {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--gold);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .title { text-align: center; color: var(--gold); font-size: 26px; margin-bottom: 20px; text-shadow: 2px 2px 4px #000; letter-spacing: 2px; }
+
+        /* 模式切换 */
+        .control-panel { background: var(--panel); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .mode-row { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 12px; flex-wrap: wrap; }
+        .mode-window { width: 140px; height: 36px; background: #000; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; cursor: pointer; }
+        .mode-reel { display: flex; flex-direction: column; transition: transform var(--anim-speed) cubic-bezier(0.45, 0.05, 0.55, 0.95); height: 100%; }
+        .mode-unit { height: 36px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: var(--cyan); flex-shrink: 0; }
+        .mode-unit.qty { color: var(--lime); }
+        input[type="number"] { background: #000; border: 1px solid var(--border); color: var(--cyan); padding: 8px; border-radius: 4px; width: 80px; text-align: center; font-weight: bold; outline: none; transition: 0.2s; }
+        input[type="number"]:focus { border-color: var(--gold); }
+        
+        /* 预设方块 */
+        .preset-grid { display: flex; justify-content: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .btn-preset {
+            width: 70px;
+            height: 32px;
+            background: #3d2b1f;
+            border: 1px solid var(--border);
+            color: var(--gold);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.15s ease, background 0.3s, border-color 0.3s;
+        }
+        .btn-preset.active {
+            border-color: var(--gold);
+            background: rgba(255, 202, 0, 0.15);
+            box-shadow: inset 0 0 8px rgba(255,202,0,0.2);
+        }
+        .btn-preset-fade-out {
+            opacity: 0;
+        }
+        .btn-preset-appear {
+            animation: presetAppear 0.3s ease-out;
+        }
+        @keyframes presetAppear {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* 单位文字淡出淡入 */
+        .unit-text {
+            font-size: 13px;
+            color: var(--gold);
+            width: 50px;
+            transition: opacity 0.15s ease;
+        }
+        .unit-fade-out {
+            opacity: 0;
+        }
+
+        /* 瀑布流容器 */
+        .masonry-grid {
+            display: flex;
+            flex-wrap: wrap;
+            margin-left: -10px;
+            width: calc(100% + 10px);
+        }
+        .masonry-col {
+            flex: 0 0 auto;
+            padding-left: 10px;
+            background-clip: content-box;
+            box-sizing: border-box;
+        }
+        /* 卡片样式 */
+        .potion-item {
+            background: var(--card-bg);
+            border: 1px solid rgba(122,90,77,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: border-color var(--anim-speed);
+            position: relative;
+            width: 100%;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            break-inside: avoid;
+        }
+        .potion-item.active { border-color: var(--lime); background: rgba(181, 230, 29, 0.05); }
+        .toggle-btn { position: absolute; top: 15px; left: 15px; width: 30px; height: 16px; background: #444; border-radius: 10px; transition: 0.4s; }
+        .toggle-btn::after { content: ''; position: absolute; width: 12px; height: 12px; background: #fff; border-radius: 50%; top: 2px; left: 2px; transition: 0.4s; }
+        .active .toggle-btn { background: var(--lime); }
+        .active .toggle-btn::after { left: 16px; }
+
+        .p-body { margin-top: 25px; }
+        .p-name { font-size: 15px; color: #fff; font-weight: bold; display: block; margin-bottom: 6px; }
+        .p-tips { font-size: 11px; color: var(--gold); line-height: 1.4; margin-bottom: 8px; }
+        .p-desc { font-size: 10px; color: #888; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; }
+
+        /* 展开内容（默认隐藏，卡片激活时显示） */
+        .luck-container, .prodesc-container {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
+        }
+        .active .luck-container,
+        .active .prodesc-container {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 12px;
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+        }
+
+        .luck-chip { background: rgba(0,0,0,0.4); border: 1px solid #444; padding: 8px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px; transition: 0.3s; cursor: pointer; }
+        .luck-chip.selected { border-color: var(--cyan); background: rgba(0,229,255,0.1); }
+        .prodesc-text { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; font-size: 11px; color: var(--cyan); line-height: 1.4; }
+
+        /* 汇总区面板 */
+        .summary-box { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 10px; border: 1px solid var(--gold); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .section-title { color: var(--gold); font-weight: bold; border-bottom: 1px solid rgba(255,202,0,0.3); margin-bottom: 10px; padding-bottom: 5px; font-size: 14px; }
+        .list-container { position: relative; min-height: 50px; }
+        .line-item { font-size: 13px; color: var(--lime); display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted rgba(255,255,255,0.05); transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); max-height: 40px; opacity: 1; overflow: hidden; transform-origin: top; }
+        .line-enter-left { animation: slideInLeft 0.5s forwards; }
+        .line-enter-right { animation: slideInRight 0.5s forwards; }
+        .line-exit { opacity: 0 !important; max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; border-bottom-color: transparent !important; pointer-events: none; }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .val-text { display: inline-block; transition: color 0.3s; position: relative; }
+        .val-flash { animation: valueFlash 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        @keyframes valueFlash { 0% { color: #fff; transform: scale(1.4); text-shadow: 0 0 10px #fff; } 100% { color: var(--lime); transform: scale(1); text-shadow: none; } }
+        .val-container { position: relative; display: inline-flex; align-items: center; }
+        .delta-pop { position: absolute; right: 100%; margin-right: 8px; top: -2px; font-size: 12px; font-weight: bold; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 10; text-shadow: 1px 1px 2px #000; white-space: nowrap; }
+        .delta-pos { color: var(--lime); }
+        .delta-neg { color: #ff4444; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-15px) scale(1.2); } }
+        .empty-tip { color: #666; font-size: 12px; padding: 4px 0; }
+    </style>
+</head>
+<body>
+<div class="calc-card">
+    <div class="version-tag">v16</div>
+    <div class="title">🧪 寂月的药水工坊</div>
+    <div class="control-panel">
+        <div class="mode-row">
+            <div class="mode-window" onclick="toggleMode()">
+                <div class="mode-reel" id="mode-reel">
+                    <div class="mode-unit">持续时长模式</div>
+                    <div class="mode-unit qty">制作瓶数模式</div>
+                </div>
+            </div>
+            <input type="number" id="global-val" value="60" min="1" oninput="validateAndCalc(this)" onkeydown="return event.key !== '-' && event.key !== 'e'">
+            <span id="unit-text" class="unit-text">分钟</span>
+        </div>
+        <div class="preset-grid" id="preset-container"></div>
+    </div>
+
+    <!-- 瀑布流容器：由JS动态填充列 -->
+    <div class="masonry-grid" id="masonry-grid"></div>
+
+    <div class="summary-box">
+        <div>
+            <div class="section-title">制作清单 <span id="total-info" style="font-size:11px; font-weight:normal; color:#666;"></span></div>
+            <div id="bottle-output" class="list-container"></div>
+        </div>
+        <div>
+            <div class="section-title">材料汇总</div>
+            <div id="mat-output" class="list-container"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ==================== 数据定义 ====================
+    const potionData = [
+        { "id": "LUCK_M", "name": "🍀 幸运系列", "time": 0, "tooltips": "提高幸运加成", "desc": "开启后选择珍珠规格。效果随时间递减。", "materials": {}, "prodesc": "幸运药水基于时间改变运气<br>大于10分钟增加0.3<br>大于5分钟增加0.2<br>五分钟内增加0.1"},
+        { "id": "BIOME_SIGHT", "name": "生物群系视觉药水", "time": 5, "tooltips": "显示感染物块的位置", "desc": "分别以紫、红、和粉色高亮显示腐化、猩红、或神圣图格。", "materials": { "瓶装水": 1, "火焰花": 1, "闪耀根": 1, "月光草": 1, "草种子": 5 } },
+        { "id": "BUILDER", "name": "建筑工药水", "time": 45, "tooltips": "提高放置速度、扩大放置范围", "desc": "提高放置速度，放置范围扩展一格。", "materials": { "瓶装水": 1, "闪耀根": 1, "寒颤棘": 1, "月光草": 1 } },
+        { "id": "FLIPPER", "name": "脚蹼药水", "time": 8, "tooltips": "让你在液体中快速移动", "desc": "液体不再妨碍移动速度，且让玩家能够游泳。", "materials": { "瓶装水": 1, "寒颤棘": 1, "水叶草": 1 } },
+        { "id": "GILLS", "name": "鱼鳃药水", "time": 4, "tooltips": "可在液体中呼吸", "desc": "让玩家可以在水底呼吸，防止溺水。", "materials": { "瓶装水": 1, "水叶草": 1, "珊瑚": 1 } },
+        { "id": "GRAVITATION", "name": "重力药水", "time": 3, "tooltips": "可控制重力", "desc": "让玩家可以用上键逆转重力。", "materials": { "瓶装水": 1, "火焰花": 1, "死亡草": 1, "闪耀根": 1, "羽毛": 1 } },
+        { "id": "NIGHT_OWL", "name": "夜猫子药水", "time": 10, "tooltips": "夜视力提升", "desc": "改善玩家的夜间视野并增加所有光源的光照半径。", "materials": { "瓶装水": 1, "太阳花": 1, "闪耀根": 1 } },
+        { "id": "SHINE", "name": "光芒药水", "time": 10, "tooltips": "发出光环", "desc": "使玩家发出明亮的光芒。", "materials": { "瓶装水": 1, "太阳花": 1, "发光蘑菇": 1 } },
+        { "id": "WATER_WALKING", "name": "水上漂药水", "time": 10, "tooltips": "可在水上行走", "desc": "使玩家能在液体上行走。", "materials": { "瓶装水": 1, "水叶草": 1, "鲨鱼鳍": 1 } }
+    ];
+
+    const luckConfig = {
+        "LUCK_S": { "name": "强效幸运", "time": 15, "materials": { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "粉珍珠": 1 } },
+        "LUCK_N": { "name": "幸运药水", "time": 10, "materials": { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "黑珍珠": 1 } },
+        "LUCK_W": { "name": "弱效幸运", "time": 5, "materials": { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "白珍珠": 1 } }
+    };
+
+    // ==================== 全局状态 ====================
+    let currentMode = 'time';
+    let activeLuckKeys = new Set(['LUCK_S']);
+    let lastBottles = {};
+    let lastMats = {};
+    let activeCardIds = new Set(); // 存储激活的药水id
+
+    // DOM 元素
+    const modeReel = document.getElementById('mode-reel');
+    const globalInput = document.getElementById('global-val');
+    const unitText = document.getElementById('unit-text');
+    const presetContainer = document.getElementById('preset-container');
+    const masonryGrid = document.getElementById('masonry-grid');
+    const bottleOutput = document.getElementById('bottle-output');
+    const matOutput = document.getElementById('mat-output');
+    const totalInfo = document.getElementById('total-info');
+
+    // 卡片HTML缓存
+    let cardHTMLs = [];
+
+    // 淡出定时器
+    let fadeTimer = null;
+
+    // ==================== 初始化 ====================
+    function init() {
+        prepareCardHTMLs();
+        renderMasonry();
+        updateUI(true);
+        attachGlobalEvents();
+        // 为输入框添加滚轮支持
+        globalInput.addEventListener('wheel', handleWheel, { passive: false });
+        window.addEventListener('resize', debounce(renderMasonry, 150));
+    }
+
+    // 滚轮调整数值
+    function handleWheel(e) {
+        e.preventDefault(); // 阻止页面滚动
+        if (document.activeElement !== globalInput) return; // 仅当输入框聚焦时生效
+        const delta = e.deltaY > 0 ? -1 : 1; // 向下滚减1，向上滚加1
+        let newVal = parseInt(globalInput.value, 10) + delta;
+        if (isNaN(newVal) || newVal < 1) newVal = 1;
+        globalInput.value = newVal;
+        // 触发 input 事件以更新计算和预设高亮
+        globalInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // 输入框动画
+    function animateInput() {
+        globalInput.classList.add('input-flash');
+        setTimeout(() => globalInput.classList.remove('input-flash'), 300);
+    }
+
+    // 生成每张卡片的HTML字符串
+    function prepareCardHTMLs() {
+        cardHTMLs = potionData.map(p => {
+            let html = `
+                <div class="potion-item" id="card-${p.id}" data-id="${p.id}">
+                    <div class="toggle-btn"></div>
+                    <div class="p-body">
+                        <span class="p-name">${p.name}</span>
+                        <div class="p-tips">${p.tooltips} ${p.time > 0 ? `(${p.time}分钟)` : ''}</div>
+                        <div class="p-desc">${p.desc}</div>
+            `;
+            if (p.id === 'LUCK_M') {
+                html += `
+                    <div class="luck-container">
+                        <div class="luck-chip" data-luck="LUCK_S"><span>粉珍珠 (强效)</span><span>15分钟</span></div>
+                        <div class="luck-chip" data-luck="LUCK_N"><span>黑珍珠 (常规)</span><span>10分钟</span></div>
+                        <div class="luck-chip" data-luck="LUCK_W"><span>白珍珠 (弱效)</span><span>5分钟</span></div>
+                    </div>`;
+            }
+            if (p.prodesc) {
+                html += `
+                    <div class="prodesc-container">
+                        <div class="prodesc-text">📜 ${p.prodesc}</div>
+                    </div>`;
+            }
+            html += `</div></div>`;
+            return html;
+        });
+    }
+
+    // 瀑布流渲染
+    function renderMasonry() {
+        const containerWidth = masonryGrid.clientWidth;
+        const minColWidth = 200;
+        const colCount = Math.max(1, Math.floor(containerWidth / minColWidth));
+        
+        masonryGrid.innerHTML = '';
+        for (let i = 0; i < colCount; i++) {
+            const col = document.createElement('div');
+            col.className = 'masonry-col';
+            col.style.width = (100 / colCount) + '%';
+            masonryGrid.appendChild(col);
+        }
+
+        const cols = document.querySelectorAll('.masonry-col');
+        cardHTMLs.forEach((html, index) => {
+            const colIndex = index % colCount;
+            cols[colIndex].insertAdjacentHTML('beforeend', html);
+        });
+
+        bindCardClicks();
+        bindLuckClicks();
+        highlightLuckChips();
+        restoreCardActiveState();
+    }
+
+    // 绑定卡片点击
+    function bindCardClicks() {
+        document.querySelectorAll('.potion-item').forEach(card => {
+            card.onclick = (e) => {
+                if (e.target.closest('.luck-chip')) return;
+                card.classList.toggle('active');
+                const id = card.dataset.id;
+                if (card.classList.contains('active')) {
+                    activeCardIds.add(id);
+                } else {
+                    activeCardIds.delete(id);
+                }
+                doCalc();
+            };
+        });
+    }
+
+    // 绑定幸运子项点击
+    function bindLuckClicks() {
+        document.querySelectorAll('.luck-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const key = chip.dataset.luck;
+                if (key) {
+                    if (activeLuckKeys.has(key)) {
+                        activeLuckKeys.delete(key);
+                    } else {
+                        activeLuckKeys.add(key);
+                    }
+                    chip.classList.toggle('selected', activeLuckKeys.has(key));
+                    doCalc();
+                }
+            });
+        });
+    }
+
+    // 高亮幸运芯片
+    function highlightLuckChips() {
+        document.querySelectorAll('.luck-chip[data-luck]').forEach(chip => {
+            const key = chip.dataset.luck;
+            chip.classList.toggle('selected', activeLuckKeys.has(key));
+        });
+    }
+
+    // 恢复卡片激活状态
+    function restoreCardActiveState() {
+        activeCardIds.forEach(id => {
+            const card = document.getElementById(`card-${id}`);
+            if (card) card.classList.add('active');
+        });
+    }
+
+    // 防抖
+    function debounce(fn, delay) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+
+    // ==================== 模式切换 ====================
+    window.toggleMode = function() {
+        currentMode = (currentMode === 'time' ? 'qty' : 'time');
+        modeReel.style.transform = `translateY(${currentMode === 'time' ? '0' : '-36px'})`;
+        updateUI(true);
+    };
+
+    function updateUI(isSwitch) {
+        const vals = currentMode === 'time' ? [30, 60, 120, 300] : [10, 30, 99, 300];
+        const newUnitText = currentMode === 'time' ? '分钟' : '瓶';
+        
+        if (isSwitch) {
+            // 清除之前的定时器
+            if (fadeTimer) clearTimeout(fadeTimer);
+
+            // 淡出当前预设按钮和单位文字
+            const currentBtns = presetContainer.querySelectorAll('.btn-preset');
+            currentBtns.forEach(btn => btn.classList.add('btn-preset-fade-out'));
+            unitText.classList.add('unit-fade-out');
+
+            // 延迟后更新
+            fadeTimer = setTimeout(() => {
+                // 更新单位文字
+                unitText.innerText = newUnitText;
+                unitText.classList.remove('unit-fade-out');
+
+                // 更新预设按钮
+                presetContainer.innerHTML = vals.map(v => 
+                    `<div class="btn-preset ${v == globalInput.value ? 'active' : ''}" onclick="setVal(${v}, this)">${v}${newUnitText}</div>`
+                ).join('');
+
+                // 为新按钮添加出现动画
+                const newBtns = presetContainer.querySelectorAll('.btn-preset');
+                newBtns.forEach(btn => btn.classList.add('btn-preset-appear'));
+                setTimeout(() => {
+                    newBtns.forEach(btn => btn.classList.remove('btn-preset-appear'));
+                }, 300);
+
+                // 重新计算
+                doCalc();
+
+                fadeTimer = null;
+            }, 150);
+        } else {
+            // 非切换（如初始化）时直接更新
+            unitText.innerText = newUnitText;
+            presetContainer.innerHTML = vals.map(v => 
+                `<div class="btn-preset ${v == globalInput.value ? 'active' : ''}" onclick="setVal(${v}, this)">${v}${newUnitText}</div>`
+            ).join('');
+            doCalc();
+        }
+    }
+
+    window.setVal = function(v, el) {
+        globalInput.value = v;
+        animateInput(); // 预设点击时输入框动画
+        document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        doCalc();
+    };
+
+    window.validateAndCalc = function(input) {
+        let val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1) { val = 1; input.value = 1; }
+        document.querySelectorAll('.btn-preset').forEach(b => {
+            b.classList.toggle('active', parseInt(b.innerText) === val);
+        });
+        doCalc();
+    };
+
+    window.preventNegative = function(e) {
+        if (e.key === '-' || e.key === 'e') e.preventDefault();
+    };
+
+    function attachGlobalEvents() {
+        globalInput.addEventListener('keydown', window.preventNegative);
+    }
+
+    // ==================== 核心计算 ====================
+    function doCalc() {
+        const rawVal = parseFloat(globalInput.value) || 0;
+        const val = Math.max(1, rawVal);
+        let newMats = {}, newBottles = {}, totalB = 0;
+
+        potionData.forEach(p => {
+            const card = document.getElementById(`card-${p.id}`);
+            if (card?.classList.contains('active')) {
+                if (p.id !== 'LUCK_M') {
+                    let b = (currentMode === 'qty' ? val : Math.ceil(val / p.time));
+                    newBottles[p.name] = (newBottles[p.name] || 0) + b;
+                    for (let m in p.materials) newMats[m] = (newMats[m] || 0) + (p.materials[m] * b);
+                    totalB += b;
+                } else {
+                    activeLuckKeys.forEach(key => {
+                        const lp = luckConfig[key];
+                        if (!lp) return;
+                        let b = (currentMode === 'qty' ? val : Math.ceil(val / lp.time));
+                        newBottles[lp.name] = (newBottles[lp.name] || 0) + b;
+                        for (let m in lp.materials) newMats[m] = (newMats[m] || 0) + (lp.materials[m] * b);
+                        totalB += b;
+                    });
+                }
+            }
+        });
+
+        totalInfo.innerText = totalB > 0 ? `(共 ${totalB} 瓶)` : '';
+        smartUpdate(bottleOutput, newBottles, lastBottles, k => k, v => v + ' 瓶');
+        smartUpdate(matOutput, newMats, lastMats, k => "🔹 " + k, v => "×" + v);
+        lastBottles = {...newBottles};
+        lastMats = {...newMats};
+    }
+
+    // ==================== 智能更新 ====================
+    function smartUpdate(container, newData, oldData, formatKey, formatVal) {
+        if (Object.keys(newData).length === 0) {
+            const items = container.querySelectorAll('.line-item');
+            if (items.length > 0) {
+                items.forEach(el => { el.classList.add('line-exit'); });
+                setTimeout(() => { container.innerHTML = '<div class="empty-tip">未点选药水</div>'; }, 500);
+            } else {
+                if (!container.querySelector('.empty-tip')) container.innerHTML = '<div class="empty-tip">未点选药水</div>';
+            }
+            return;
+        }
+        const emptyTip = container.querySelector('.empty-tip');
+        if (emptyTip) emptyTip.remove();
+
+        for (let k in oldData) {
+            if (!(k in newData)) {
+                const safeId = escapeKey(k);
+                const el = container.querySelector(`[data-key="${safeId}"]`);
+                if (el) {
+                    el.classList.add('line-exit');
+                    setTimeout(() => el.remove(), 500);
+                }
+            }
+        }
+
+        let enterIndex = 0;
+        for (let k in newData) {
+            const newVal = newData[k];
+            const oldVal = oldData[k];
+            const safeId = escapeKey(k);
+            let el = container.querySelector(`[data-key="${safeId}"]`);
+
+            if (oldVal === undefined) {
+                if (el) el.remove();
+                el = document.createElement('div');
+                el.className = `line-item ${enterIndex % 2 === 0 ? 'line-enter-left' : 'line-enter-right'}`;
+                el.setAttribute('data-key', safeId);
+                el.innerHTML = `<span>${formatKey(k)}</span><span class="val-container"><span class="val-text">${formatVal(newVal)}</span></span>`;
+                container.appendChild(el);
+                enterIndex++;
+            } else if (newVal !== oldVal) {
+                if (el) {
+                    el.classList.remove('line-exit');
+                    const valContainer = el.querySelector('.val-container');
+                    const valText = el.querySelector('.val-text');
+                    valText.innerText = formatVal(newVal);
+                    valText.classList.remove('val-flash');
+                    void valText.offsetWidth;
+                    valText.classList.add('val-flash');
+                    const delta = newVal - oldVal;
+                    const deltaEl = document.createElement('span');
+                    deltaEl.className = `delta-pop ${delta > 0 ? 'delta-pos' : 'delta-neg'}`;
+                    deltaEl.innerText = (delta > 0 ? '+' : '') + delta;
+                    valContainer.appendChild(deltaEl);
+                    setTimeout(() => deltaEl.remove(), 800);
+                }
+            }
+        }
+    }
+
+    function escapeKey(key) {
+        return encodeURIComponent(key).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16));
+    }
+
+    init();
+})();
+</script>
+</body>
+</html>
