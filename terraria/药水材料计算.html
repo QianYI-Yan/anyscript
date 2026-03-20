@@ -158,7 +158,7 @@
             transform: rotate(90deg);
         }
 
-        /* 子容器动画 - 优化性能 */
+        /* 子容器动画 - 使用 max-height 过渡 */
         .category-children {
             max-height: 0;
             opacity: 0;
@@ -237,6 +237,33 @@
         .p-tips { font-size: 11px; color: var(--gold); line-height: 1.4; margin-bottom: 8px; }
         .p-desc { font-size: 10px; color: #888; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; }
 
+        /* 幸运药水子项容器 - 默认隐藏，卡片激活时显示 */
+        .luck-container {
+            margin-top: 12px;
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+            display: none;
+        }
+        .potion-item.active .luck-container {
+            display: block;
+        }
+        .luck-chip {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #444;
+            padding: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .luck-chip.selected {
+            border-color: var(--cyan);
+            background: rgba(0,229,255,0.1);
+        }
+
         .prodesc-container {
             max-height: 0;
             opacity: 0;
@@ -308,10 +335,10 @@
         .val-flash { animation: valueFlash 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         @keyframes valueFlash { 0% { color: #fff; transform: scale(1.4); text-shadow: 0 0 10px #fff; } 100% { color: var(--lime); transform: scale(1); text-shadow: none; } }
         .val-container { position: relative; display: inline-flex; align-items: center; }
-        /* 新的浮动数字动画：先重叠，立即左移，停顿，再左移淡出 */
+        /* 浮动数字动画 */
         .delta-pop { 
             position: absolute; 
-            left: 0;                /* 与数值左对齐，实现重叠 */
+            left: 0;
             top: -2px;
             font-size: 12px; font-weight: bold; pointer-events: none; 
             animation: floatMove 1.2s ease-out forwards;
@@ -324,18 +351,18 @@
         @keyframes floatMove {
             0% {
                 opacity: 1;
-                transform: translateX(0);       /* 起始位置：重叠在数值上 */
+                transform: translateX(0);
             }
             20% {
-                transform: translateX(-15px);    /* 快速左移15px，无停顿 */
+                transform: translateX(-15px);
                 opacity: 1;
             }
             60% {
-                transform: translateX(-15px);    /* 停顿位置保持 */
+                transform: translateX(-15px);
                 opacity: 1;
             }
             100% {
-                transform: translateX(-35px);    /* 继续左移20px并淡出 */
+                transform: translateX(-35px);
                 opacity: 0;
             }
         }
@@ -345,7 +372,7 @@
 </head>
 <body>
 <div class="calc-card">
-    <div class="version-tag" id="version-tag">v28</div>
+    <div class="version-tag" id="version-tag">v38|Beta-1</div>
     <div class="title">🧪 寂月的药水工坊</div>
     <div class="control-panel">
         <div class="mode-row">
@@ -361,7 +388,6 @@
         <div class="preset-grid" id="preset-container"></div>
     </div>
 
-    <!-- 分类列表上方工具栏 -->
     <div class="category-toolbar">
         <div class="global-checkbox">
             <input type="checkbox" id="global-select">
@@ -390,111 +416,212 @@
 <script>
 (function() {
     // ==================== 版本号 ====================
-    const VERSION = 'v28';
+    const VERSION = 'v38|Beta-1';
     document.getElementById('version-tag').innerText = VERSION;
 
     // ==================== 材料图标映射 ====================
     const materialIcons = {
-        "瓶装水": "Bottle.png",
-        "太阳花": "Daybloom.png",
-        "铁矿": "Iron_Ore.png",
-        "死亡草": "Deathweed.png",
-        "月光草": "Moonglow.png",
-        "发光蘑菇": "Glowing_Mushroom.png",
+        "瓶装水": "Bottled_Water.png",
         "火焰花": "Fireblossom.png",
-        "闪耀根": "Shiverthorn.png",
+        "闪耀根": "Blinkroot.png",
+        "月光草": "Moonglow.png",
+        "草种子": "Grass_Seeds.png",
         "寒颤棘": "Shiverthorn.png",
         "水叶草": "Waterleaf.png",
         "珊瑚": "Coral.png",
+        "太阳花": "Daybloom.png",
+        "发光蘑菇": "Glowing_Mushroom.png",
+        "死亡草": "Deathweed.png",
         "羽毛": "Feather.png",
         "瓢虫": "Ladybug.png",
         "黑珍珠": "Black_Pearl.png",
+        "鲨鱼鳍": "Shark_Fin.png",
+        "斑驳油鱼": "Variegated_Lardfish.png",
+        "寒霜鲦鱼": "Frost_Minnow.png",
+        "琥珀": "Amber.png",
+        "松脆蜂蜜块": "Crispy_Honey_Block.png",
+        "腐肉": "Rotten_Chunk.png",
+        "椎骨": "Vertebra.png",
+        "雀鲷": "Damselfish.png",
+        "诅咒焰": "Cursed_Flame.png",
+        "狱石": "Hellstone.png",
+        "金尘": "Gold_Dust.png",
+        "灵液": "Ichor.png",
+        "纳米机器人": "Nanites.png",
+        "彩纸": "Confetti.png",
+        "毒刺": "Stinger.png",
+        "小瓶毒液": "Vial_of_Venom.png",
+        "晶状体": "Lens.png",
+        "装甲洞穴鱼": "Armored_Cavefish.png",
+        "闪鳍锦鲤": "Flarefin_Koi.png",
+        "黑曜石鱼": "Obsidifish.png",
+        "铁矿": "Iron_Ore.png",
+        "七彩碎鱼": "Prismite.png",
+        "堕落之星": "Fallen_Star.png",
+        "血腥食人鱼": "Hemopiranha.png",
+        "蘑菇": "Mushroom.png",
+        "黑檀锦鲤": "Ebonkoi.png",
+        "蛛网": "Cobweb.png",
+        "金矿": "Gold_Ore.png",
+        "仙人掌": "Cactus.png",
+        "猩红虎鱼": "Crimson_Tigerfish.png",
+        "黑曜石": "Obsidian.png",
+        "蚁狮上颚": "Antlion_Mandible.png",
+        "粉珍珠": "Pink_Pearl.png",
+        "白珍珠": "White_Pearl.png",
     };
 
-    // 基础图片URL
     const IMG_BASE_URL = "https://terraria.wiki.gg/images/";
 
-    // ==================== 数据 ====================
+    // ==================== 幸运药水配置 ====================
+    const luckConfig = {
+        "LUCK_S": { "name": "强效幸运", "time": 15, "materials": { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "粉珍珠": 1 }, icon: "Greater_Luck_Potion.png" },
+        "LUCK_N": { "name": "幸运药水", "time": 10, "materials": { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "黑珍珠": 1 }, icon: "Luck_Potion.png" },
+        "LUCK_W": { "name": "弱效幸运", "time": 5, "materials": { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "白珍珠": 1 }, icon: "Lesser_Luck_Potion.png" }
+    };
+
+    // ==================== 药水数据 ====================
     const potionHierarchy = [
+        // 功能/其它药水
         {
-            id: "cat_base",
-            name: "基础药水",
-            desc: "最基本的药水类别",
+            id: "cat_functional",
+            name: "功能/其它药水",
+            desc: "基础功能类药水",
             list_0: [
                 {
-                    id: "cat_combat",
-                    name: "战斗药水",
-                    desc: "提升战斗能力",
-                    list_1: [
-                        {
-                            id: "cat_melee",
-                            name: "近战",
-                            desc: "增强近战输出",
-                            items: [
-                                { id: "ironskin", name: "铁皮药水", time: 8, tooltips: "增加防御力", desc: "防御力增加8点。", materials: { "瓶装水": 1, "太阳花": 1, "铁矿": 1 }, icon: "Ironskin_Potion.png" },
-                                { id: "rage", name: "怒气药水", time: 4, tooltips: "增加暴击", desc: "提高暴击几率。", materials: { "瓶装水": 1, "死亡草": 1, "月光草": 1 }, icon: "Rage_Potion.png" }
-                            ]
-                        },
-                        {
-                            id: "cat_ranged",
-                            name: "远程",
-                            desc: "增强远程输出",
-                            items: [
-                                { id: "archery", name: "箭术药水", time: 8, tooltips: "增加远程伤害", desc: "远程伤害提高20%。", materials: { "瓶装水": 1, "太阳花": 1, "发光蘑菇": 1 }, icon: "Archery_Potion.png" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: "cat_heal",
-                    name: "治疗药水",
-                    desc: "恢复生命",
+                    id: "cat_other",
+                    name: "其他",
+                    desc: "杂项药水",
                     items: [
-                        { id: "regen", name: "再生药水", time: 8, tooltips: "生命恢复加快", desc: "每秒恢复2点生命值。", materials: { "瓶装水": 1, "太阳花": 1, "蘑菇": 1 }, icon: "Regeneration_Potion.png" }
-                    ]
-                },
-                // 混合测试分类：同时包含子分类和直接卡片
-                {
-                    id: "cat_mix",
-                    name: "混合测试",
-                    desc: "同时包含卡片和子分类",
-                    items: [
-                        { id: "test1", name: "测试药水1", time: 5, tooltips: "测试占位", desc: "这是一个测试卡片。", materials: { "瓶装水": 1 }, icon: "Spelunker_Potion.png" },
-                        { id: "test2", name: "测试药水2", time: 6, tooltips: "测试占位", desc: "另一个测试卡片。", materials: { "瓶装水": 1 }, icon: "Spelunker_Potion.png" },
-                        { id: "test3", name: "测试药水3", time: 7, tooltips: "测试占位", desc: "第三个测试卡片。", materials: { "瓶装水": 1 }, icon: "Spelunker_Potion.png" }
-                    ],
-                    list_0: [
-                        {
-                            id: "cat_mix_sub",
-                            name: "测试子分类",
-                            desc: "子分类测试",
-                            items: [
-                                { id: "sub_test1", name: "子测试1", time: 3, tooltips: "子分类卡片", desc: "子分类下的卡片", materials: { "瓶装水": 1 }, icon: "Spelunker_Potion.png" }
-                            ]
-                        }
+                        { id: "luck_m", name: "🍀 幸运系列", time: 0, tooltips: "提高幸运加成", desc: "开启后选择珍珠规格。效果随时间递减。", materials: {}, prodesc: "幸运药水基于时间改变运气<br>大于10分钟增加0.3<br>大于5分钟增加0.2<br>五分钟内增加0.1", icon: "Luck_Potion.png" },
+                        { id: "biome_sight", name: "生物群系视觉药水", time: 5, tooltips: "显示感染物块的位置", desc: "分别以紫、红、和粉色高亮显示腐化、猩红、或神圣图格。", materials: { "瓶装水": 1, "火焰花": 1, "闪耀根": 1, "月光草": 1, "草种子": 5 }, icon: "Biome_Sight_Potion.png" },
+                        { id: "builder", name: "建筑工药水", time: 45, tooltips: "提高放置速度、扩大放置范围", desc: "提高放置速度，放置范围扩展一格。", materials: { "瓶装水": 1, "闪耀根": 1, "寒颤棘": 1, "月光草": 1 }, icon: "Builder_Potion.png" },
+                        { id: "flipper", name: "脚蹼药水", time: 8, tooltips: "让你在液体中快速移动", desc: "液体不再妨碍移动速度，且让玩家能够游泳。", materials: { "瓶装水": 1, "寒颤棘": 1, "水叶草": 1 }, icon: "Flipper_Potion.png" },
+                        { id: "gills", name: "鱼鳃药水", time: 4, tooltips: "可在液体中呼吸", desc: "让玩家可以在水底呼吸，防止溺水。", materials: { "瓶装水": 1, "水叶草": 1, "珊瑚": 1 }, icon: "Gills_Potion.png" },
+                        { id: "gravitation", name: "重力药水", time: 3, tooltips: "可控制重力", desc: "让玩家可以用▲上键逆转重力。", materials: { "瓶装水": 1, "火焰花": 1, "死亡草": 1, "闪耀根": 1, "羽毛": 1 }, icon: "Gravitation_Potion.png" },
+                        { id: "shine", name: "光芒药水", time: 10, tooltips: "发出光环", desc: "使玩家发出明亮的光芒。", materials: { "瓶装水": 1, "太阳花": 1, "发光蘑菇": 1 }, icon: "Shine_Potion.png" },
+                        { id: "water_walking", name: "水上漂药水", time: 10, tooltips: "可在水上行走", desc: "使玩家能在液体上行走。", materials: { "瓶装水": 1, "水叶草": 1, "鲨鱼鳍": 1 }, icon: "Water_Walking_Potion.png" },
+                        { id: "summoning", name: "召唤药水", time: 8, tooltips: "仆从数量上限增加1", desc: "仆从数量上限提高 1。", materials: { "瓶装水": 1, "斑驳油鱼": 1, "月光草": 1 }, icon: "Summoning_Potion.png" },
+                        { id: "warmth", name: "保暖药水", time: 15, tooltips: "降低所受冷系伤害", desc: "减少来自冷系敌怪的伤害。", materials: { "瓶装水": 1, "寒霜鲦鱼": 1, "寒颤棘": 1 }, icon: "Warmth_Potion.png" },
                     ]
                 }
             ]
         },
+        // 钓鱼药水
         {
-            id: "cat_other",
-            name: "其他药水",
-            desc: "特殊效果药水",
+            id: "cat_fishing",
+            name: "钓鱼药水",
+            desc: "钓鱼相关药水",
             list_0: [
                 {
-                    id: "cat_luck",
-                    name: "幸运",
-                    desc: "提升运气",
+                    id: "cat_fishing_items",
+                    name: "钓鱼药水",
+                    desc: "",
                     items: [
-                        { id: "luck", name: "幸运药水", time: 10, tooltips: "提高运气", desc: "提高运气。<br>• 大于10分钟：+0.3<br>• 大于5分钟：+0.2<br>• 5分钟内：+0.1", materials: { "瓶装水": 1, "水叶草": 1, "瓢虫": 1, "黑珍珠": 1 }, icon: "Luck_Potion.png" }
+                        { id: "crate", name: "宝匣药水", time: 4, tooltips: "钓上宝匣的几率更大", desc: "钓到宝匣的几率翻倍。", materials: { "瓶装水": 1, "琥珀": 1, "月光草": 1, "寒颤棘": 1, "水叶草": 1 }, icon: "Crate_Potion.png" },
+                        { id: "fishing", name: "钓鱼药水", time: 8, tooltips: "提高渔力", desc: "渔力提高 15 点。", materials: { "瓶装水": 1, "松脆蜂蜜块": 1, "水叶草": 1 }, icon: "Fishing_Potion.png" },
+                        { id: "sonar", name: "声呐药水", time: 8, tooltips: "你能看到是什么在咬你的鱼钩", desc: "在钓鱼时显示渔获的名称。", materials: { "瓶装水": 1, "水叶草": 1, "珊瑚": 1 }, icon: "Sonar_Potion.png" },
+                    ]
+                }
+            ]
+        },
+        // 特殊功能药水
+        {
+            id: "cat_special",
+            name: "特殊功能药水",
+            desc: "影响刷怪",
+            list_0: [
+                {
+                    id: "cat_special_items",
+                    name: "特殊功能",
+                    desc: "",
+                    items: [
+                        { id: "battle", name: "战斗药水", time: 7, tooltips: "提高敌人生成速度", desc: "提高敌怪和小动物的生成速度和屏幕上敌怪的最大数量。", materials: { "瓶装水": 1, "死亡草": 1, "腐肉": 1 }, alternative: { "椎骨": 1 }, icon: "Battle_Potion.png" },
+                        { id: "calming", name: "镇静药水", time: 12, tooltips: "敌人生成速度降低", desc: "敌怪生成速度降低 17%。", materials: { "瓶装水": 1, "雀鲷": 1, "太阳花": 1 }, icon: "Calming_Potion.png" },
+                    ]
+                }
+            ]
+        },
+        // 灌注药剂
+        {
+            id: "cat_imbuement",
+            name: "灌注药剂",
+            desc: "近战攻击附加效果",
+            list_0: [
+                {
+                    id: "cat_imbuement_items",
+                    name: "灌注药剂",
+                    desc: "",
+                    items: [
+                        { id: "cursed_flame", name: "诅咒焰药剂", time: 20, tooltips: "近战攻击会对敌人施放诅咒焰", desc: "近战和鞭攻击对敌怪造成诅咒狱火减益。", materials: { "瓶装水": 1, "诅咒焰": 2 }, icon: "Flask_of_Cursed_Flames.png" },
+                        { id: "fire", name: "烈火药剂", time: 20, tooltips: "近战攻击会使敌人着火", desc: "近战和鞭攻击对敌怪造成着火了！减益。", materials: { "瓶装水": 1, "狱石": 3 }, icon: "Flask_of_Fire.png" },
+                        { id: "gold", name: "金药剂", time: 20, tooltips: "近战攻击会使敌人掉落更多金子", desc: "近战和鞭攻击对敌怪造成迈达斯减益。", materials: { "瓶装水": 1, "金尘": 5 }, icon: "Flask_of_Gold.png" },
+                        { id: "ichor", name: "灵液药剂", time: 20, tooltips: "近战攻击会降低敌人防御", desc: "近战和鞭攻击对敌怪造成灵液减益。", materials: { "瓶装水": 1, "灵液": 2 }, icon: "Flask_of_Ichor.png" },
+                        { id: "nanites", name: "纳米机器人药剂", time: 20, tooltips: "近战攻击会使敌人困惑", desc: "近战和鞭攻击对敌怪造成困惑减益。", materials: { "瓶装水": 1, "纳米机器人": 5 }, icon: "Flask_of_Nanites.png" },
+                        { id: "party", name: "派对药剂", time: 20, tooltips: "近战攻击会喷撒彩纸", desc: "近战和鞭攻击会喷出彩纸。", materials: { "瓶装水": 1, "彩纸": 5 }, icon: "Flask_of_Party.png" },
+                        { id: "poison", name: "毒药剂", time: 20, tooltips: "近战攻击会使敌人中毒", desc: "近战和鞭攻击对敌怪造成中毒减益。", materials: { "瓶装水": 1, "毒刺": 1 }, icon: "Flask_of_Poison.png" },
+                        { id: "venom", name: "毒液药剂", time: 20, tooltips: "近战攻击会对你的目标施放酸性毒液", desc: "近战和鞭攻击对敌怪造成酸性毒液减益。", materials: { "瓶装水": 1, "小瓶毒液": 5 }, icon: "Flask_of_Venom.png" },
+                    ]
+                }
+            ]
+        },
+        // 红药水增益 - 战斗
+        {
+            id: "cat_red",
+            name: "红药水增益",
+            desc: "战斗与探索增益",
+            list_0: [
+                {
+                    id: "cat_combat",
+                    name: "战斗",
+                    desc: "提升战斗能力",
+                    items: [
+                        { id: "archery", name: "箭术药水", time: 8, tooltips: "弓伤害提高10%，箭速度提高20%", desc: "箭的伤害和开火速度提高 20%。", materials: { "瓶装水": 1, "太阳花": 1, "晶状体": 1 }, icon: "Archery_Potion.png" },
+                        { id: "endurance", name: "耐力药水", time: 4, tooltips: "所受伤害降低10%", desc: "所受的所有伤害减少 10%。", materials: { "瓶装水": 1, "装甲洞穴鱼": 1, "闪耀根": 1 }, icon: "Endurance_Potion.png" },
+                        { id: "inferno", name: "狱火药水", time: 4, tooltips: "附近的敌人被点燃", desc: "在玩家周围投下一层造成伤害的火环。", materials: { "瓶装水": 1, "闪鳍锦鲤": 1, "黑曜石鱼": 2, "火焰花": 1 }, icon: "Inferno_Potion.png" },
+                        { id: "ironskin", name: "铁皮药水", time: 8, tooltips: "防御增加8", desc: "防御提升 8。", materials: { "瓶装水": 1, "太阳花": 1, "铁矿": 1 }, icon: "Ironskin_Potion.png" },
+                        { id: "lifeforce", name: "生命力药水", time: 8, tooltips: "最大生命值提高20%", desc: "最大生命值提升 20%。", materials: { "瓶装水": 1, "七彩碎鱼": 1, "月光草": 1, "寒颤棘": 1, "水叶草": 1 }, icon: "Lifeforce_Potion.png" },
+                        { id: "mana", name: "魔能药水", time: 4, tooltips: "魔法伤害提高20%", desc: "魔法伤害提升 20%。", materials: { "瓶装水": 1, "月光草": 1, "死亡草": 1, "堕落之星": 1 }, icon: "Mana_Potion.png" },
+                        { id: "mana_regen", name: "魔力再生药水", time: 8, tooltips: "提高魔力再生速度", desc: "提高魔力再生。", materials: { "瓶装水": 1, "月光草": 1, "太阳花": 1, "堕落之星": 1 }, icon: "Magic_Power_Potion.png" },
+                        { id: "rage", name: "暴怒药水", time: 4, tooltips: "暴击率提高10%", desc: "暴击率增加 10%。", materials: { "瓶装水": 1, "血腥食人鱼": 1, "死亡草": 1 }, icon: "Rage_Potion.png" },
+                        { id: "regen", name: "再生药水", time: 8, tooltips: "提供生命再生", desc: "生命再生每秒增加 2 点生命值。", materials: { "瓶装水": 1, "太阳花": 1, "蘑菇": 1 }, icon: "Regeneration_Potion.png" },
+                        { id: "wrath", name: "怒气药水", time: 4, tooltips: "伤害提高10%", desc: "武器造成的伤害增加 10%。", materials: { "瓶装水": 1, "黑檀锦鲤": 1, "死亡草": 1 }, icon: "Wrath_Potion.png" },
                     ]
                 },
                 {
-                    id: "cat_misc",
-                    name: "杂项",
-                    desc: "其他用途",
+                    id: "cat_explore",
+                    name: "探索",
+                    desc: "帮助探索",
                     items: [
-                        { id: "gravitation", name: "重力药水", time: 3, tooltips: "可控制重力", desc: "让玩家可以用上键逆转重力。", materials: { "瓶装水": 1, "火焰花": 1, "死亡草": 1, "闪耀根": 1, "羽毛": 1 }, icon: "Gravitation_Potion.png" }
+                        { id: "dangersense", name: "危险感药水", time: 10, tooltips: "显示附近的危险源", desc: "高亮标记附近的陷阱、危险物块和敌怪投影。", materials: { "瓶装水": 1, "寒颤棘": 1, "蛛网": 10 }, icon: "Dangersense_Potion.png" },
+                        { id: "hunter", name: "狩猎药水", time: 8, tooltips: "显示敌人位置", desc: "高亮标记屏幕中的所有敌怪。", materials: { "瓶装水": 1, "太阳花": 1, "闪耀根": 1, "鲨鱼鳍": 1 }, icon: "Hunter_Potion.png" },
+                        { id: "spelunker", name: "洞穴探险药水", time: 5, tooltips: "显示宝藏和矿石的位置", desc: "高亮标记矿石、宝箱、和其他宝藏。", materials: { "瓶装水": 1, "闪耀根": 1, "月光草": 1, "金矿": 1 }, icon: "Spelunker_Potion.png" },
+                    ]
+                },
+                {
+                    id: "cat_movement",
+                    name: "移动",
+                    desc: "提升机动性",
+                    items: [
+                        { id: "featherfall", name: "羽落药水", time: 10, tooltips: "按向上键或向下键来控制下降速度", desc: "允许玩家控制下落速度，并抵消掉落伤害。", materials: { "瓶装水": 1, "太阳花": 1, "闪耀根": 1, "羽毛": 1 }, icon: "Featherfall_Potion.png" },
+                        { id: "swiftness", name: "敏捷药水", time: 8, tooltips: "移动速度提高25%", desc: "移动速度提高25%。", materials: { "瓶装水": 1, "闪耀根": 1, "仙人掌": 1 }, icon: "Swiftness_Potion.png" },
+                    ]
+                },
+                {
+                    id: "cat_utility",
+                    name: "辅助",
+                    desc: "其他辅助效果",
+                    items: [
+                        { id: "heartreach", name: "拾心药水", time: 8, tooltips: "扩大心的拾取范围", desc: "增加心的拾取范围。", materials: { "瓶装水": 1, "猩红虎鱼": 1, "太阳花": 1 }, icon: "Heartreach_Potion.png" },
+                        { id: "obsidian_skin", name: "黑曜石皮药水", time: 6, tooltips: "对熔岩免疫", desc: "给予对来自熔岩的伤害的抵抗力。", materials: { "瓶装水": 1, "火焰花": 1, "水叶草": 1, "黑曜石": 1 }, icon: "Obsidian_Skin_Potion.png" },
+                    ]
+                },
+                {
+                    id: "cat_mining",
+                    name: "挖矿",
+                    desc: "提升挖矿效率",
+                    items: [
+                        { id: "mining", name: "挖矿药水", time: 10, tooltips: "挖矿速度提高25%", desc: "增加挖矿速度。", materials: { "瓶装水": 1, "蚁狮上颚": 1, "闪耀根": 1 }, icon: "Mining_Potion.png" },
                     ]
                 }
             ]
@@ -504,12 +631,16 @@
     // ==================== 全局状态 ====================
     let currentMode = 'time';
     let activePotionIds = new Set();
+    let activeLuckKeys = new Set(['LUCK_N']);
     let lastBottles = {};
     let lastMats = {};
 
     let flatPotions = [];
     let categoryTree = [];
     let maxDepth = 0;
+
+    // 药水图标映射（用于制作清单）
+    let potionIcons = {};
 
     const modeReel = document.getElementById('mode-reel');
     const globalInput = document.getElementById('global-val');
@@ -525,7 +656,6 @@
     const collapseAllBtn = document.getElementById('collapse-all');
 
     let fadeTimer = null;
-    // 采用元素自身存储超时
 
     // ==================== 解析 ====================
     function parseHierarchy(nodes, parentPath = []) {
@@ -707,25 +837,58 @@
         }
     }
 
+    // 幸运子项点击
+    window.toggleLuckSub = function(key) {
+        if (activeLuckKeys.has(key)) {
+            activeLuckKeys.delete(key);
+        } else {
+            activeLuckKeys.add(key);
+        }
+        document.querySelectorAll('.luck-chip[data-luck]').forEach(chip => {
+            const k = chip.dataset.luck;
+            chip.classList.toggle('selected', activeLuckKeys.has(k));
+        });
+        doCalc();
+    };
+
     function renderPotionCard(p) {
         const iconHtml = p.icon ? `<img src="${IMG_BASE_URL}${p.icon}" alt="">` : '';
-        return `
-            <div class="potion-item ${activePotionIds.has(p.id) ? 'active' : ''}" data-id="${p.id}">
-                <div class="toggle-btn"></div>
-                <div class="p-body">
-                    <div class="potion-name">
-                        ${iconHtml}
-                        <span>${p.name}</span>
+        if (p.id === 'luck_m') {
+            return `
+                <div class="potion-item ${activePotionIds.has(p.id) ? 'active' : ''}" data-id="${p.id}">
+                    <div class="toggle-btn"></div>
+                    <div class="p-body">
+                        <div class="potion-name">
+                            ${iconHtml}
+                            <span>${p.name}</span>
+                        </div>
+                        <div class="p-tips">${p.tooltips}</div>
+                        <div class="p-desc">${p.desc}</div>
+                        <div class="luck-container">
+                            <div class="luck-chip ${activeLuckKeys.has('LUCK_S') ? 'selected' : ''}" data-luck="LUCK_S" onclick="toggleLuckSub('LUCK_S');event.stopPropagation();"><span>粉珍珠 (强效)</span><span>15分钟</span></div>
+                            <div class="luck-chip ${activeLuckKeys.has('LUCK_N') ? 'selected' : ''}" data-luck="LUCK_N" onclick="toggleLuckSub('LUCK_N');event.stopPropagation();"><span>黑珍珠 (常规)</span><span>10分钟</span></div>
+                            <div class="luck-chip ${activeLuckKeys.has('LUCK_W') ? 'selected' : ''}" data-luck="LUCK_W" onclick="toggleLuckSub('LUCK_W');event.stopPropagation();"><span>白珍珠 (弱效)</span><span>5分钟</span></div>
+                        </div>
+                        ${p.prodesc ? `<div class="prodesc-container"><div class="prodesc-text">📜 ${p.prodesc}</div></div>` : ''}
                     </div>
-                    <div class="p-tips">${p.tooltips} ${p.time ? `(${p.time}分钟)` : ''}</div>
-                    <div class="p-desc">${p.desc}</div>
-                    ${p.prodesc ? `
-                    <div class="prodesc-container">
-                        <div class="prodesc-text">📜 ${p.prodesc}</div>
-                    </div>` : ''}
                 </div>
-            </div>
-        `;
+            `;
+        } else {
+            return `
+                <div class="potion-item ${activePotionIds.has(p.id) ? 'active' : ''}" data-id="${p.id}">
+                    <div class="toggle-btn"></div>
+                    <div class="p-body">
+                        <div class="potion-name">
+                            ${iconHtml}
+                            <span>${p.name}</span>
+                        </div>
+                        <div class="p-tips">${p.tooltips} ${p.time ? `(${p.time}分钟)` : ''}</div>
+                        <div class="p-desc">${p.desc}</div>
+                        ${p.prodesc ? `<div class="prodesc-container"><div class="prodesc-text">📜 ${p.prodesc}</div></div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
     }
 
     function renderCategoryList() {
@@ -772,7 +935,7 @@
 
         document.querySelectorAll('.potion-item').forEach(card => {
             card.addEventListener('click', (e) => {
-                e.stopPropagation();
+                if (e.target.closest('.luck-chip')) return;
                 const id = card.dataset.id;
                 if (activePotionIds.has(id)) {
                     activePotionIds.delete(id);
@@ -792,6 +955,16 @@
         categoryTree = buildCategoryTree(potionHierarchy, 0);
         activePotionIds.clear();
         refreshCategoryTreeState();
+
+        // 构建药水图标映射（用于制作清单）
+        flatPotions.forEach(p => {
+            if (p.icon) potionIcons[p.name] = p.icon;
+        });
+        // 添加幸运子项图标
+        for (let key in luckConfig) {
+            const lp = luckConfig[key];
+            if (lp.icon) potionIcons[lp.name] = lp.icon;
+        }
     }
 
     function toggleGlobalSelect(checked) {
@@ -926,6 +1099,7 @@
         globalInput.addEventListener('keydown', window.preventNegative);
     }
 
+    // ==================== 核心计算 ====================
     function doCalc() {
         const rawVal = parseFloat(globalInput.value) || 0;
         const val = Math.max(1, rawVal);
@@ -933,23 +1107,41 @@
 
         flatPotions.forEach(p => {
             if (activePotionIds.has(p.id)) {
-                let b = (currentMode === 'qty' ? val : Math.ceil(val / p.time));
-                newBottles[p.name] = (newBottles[p.name] || 0) + b;
-                for (let m in p.materials) {
-                    newMats[m] = (newMats[m] || 0) + (p.materials[m] * b);
+                if (p.id !== 'luck_m') {
+                    let b = (currentMode === 'qty' ? val : Math.ceil(val / p.time));
+                    newBottles[p.name] = (newBottles[p.name] || 0) + b;
+                    for (let m in p.materials) {
+                        newMats[m] = (newMats[m] || 0) + (p.materials[m] * b);
+                    }
+                    totalB += b;
+                } else {
+                    activeLuckKeys.forEach(key => {
+                        const lp = luckConfig[key];
+                        if (!lp) return;
+                        let b = (currentMode === 'qty' ? val : Math.ceil(val / lp.time));
+                        newBottles[lp.name] = (newBottles[lp.name] || 0) + b;
+                        for (let m in lp.materials) {
+                            newMats[m] = (newMats[m] || 0) + (lp.materials[m] * b);
+                        }
+                        totalB += b;
+                    });
                 }
-                totalB += b;
             }
         });
 
         totalInfo.innerText = totalB > 0 ? `(共 ${totalB} 瓶)` : '';
-        // 制作清单：启用变红划掉动画
+
+        // 制作清单：带药水图标
         smartUpdate(bottleOutput, newBottles, lastBottles, 
-            k => `<span class="item-left">${k}</span>`, 
+            k => {
+                const icon = potionIcons[k] ? `<img src="${IMG_BASE_URL}${potionIcons[k]}" alt="">` : '';
+                return `<span class="item-left">${icon}${k}</span>`;
+            }, 
             v => v + ' 瓶',
             true
         );
-        // 材料清单：启用变红划掉动画
+
+        // 材料清单：带材料图标
         smartUpdate(matOutput, newMats, lastMats, 
             k => {
                 const icon = materialIcons[k] ? `<img src="${IMG_BASE_URL}${materialIcons[k]}" alt="">` : '';
@@ -958,18 +1150,17 @@
             v => "×" + v,
             true
         );
+
         lastBottles = {...newBottles};
         lastMats = {...newMats};
     }
 
-    // 增强的 smartUpdate，接受 hasMaterialEffect 参数
+    // ==================== 智能更新（与 v37 相同）====================
     function smartUpdate(container, newData, oldData, formatKey, formatVal, hasMaterialEffect = true) {
-        // 处理空数据
         if (Object.keys(newData).length === 0) {
             const items = container.querySelectorAll('.line-item');
             if (items.length > 0) {
                 items.forEach((el, index) => {
-                    // 清除元素上可能存在的旧超时
                     if (el.dataset.removeTimeout) {
                         clearTimeout(parseInt(el.dataset.removeTimeout));
                     }
@@ -1004,7 +1195,6 @@
         const emptyTip = container.querySelector('.empty-tip');
         if (emptyTip) emptyTip.remove();
 
-        // 收集要删除的元素
         const removeList = [];
         for (let k in oldData) {
             if (!(k in newData)) {
@@ -1016,9 +1206,7 @@
             }
         }
 
-        // 依次删除，每个元素独立超时
         removeList.forEach((el, index) => {
-            // 清除元素上可能存在的旧超时
             if (el.dataset.removeTimeout) {
                 clearTimeout(parseInt(el.dataset.removeTimeout));
             }
@@ -1042,7 +1230,6 @@
             el.dataset.removeTimeout = timeout;
         });
 
-        // 新增/更新条目
         let enterIndex = 0;
         for (let k in newData) {
             const newVal = newData[k];
@@ -1051,7 +1238,6 @@
             let el = container.querySelector(`[data-key="${safeId}"]`);
 
             if (oldVal === undefined) {
-                // 如果存在旧元素（可能正在删除），先清除其超时并移除
                 if (el) {
                     if (el.dataset.removeTimeout) {
                         clearTimeout(parseInt(el.dataset.removeTimeout));
@@ -1066,7 +1252,6 @@
                 enterIndex++;
             } else if (newVal !== oldVal) {
                 if (el) {
-                    // 如果处于删除中，先移除删除相关类和超时
                     if (el.dataset.removeTimeout) {
                         clearTimeout(parseInt(el.dataset.removeTimeout));
                         delete el.dataset.removeTimeout;
@@ -1083,7 +1268,7 @@
                     deltaEl.className = `delta-pop ${delta > 0 ? 'delta-pos' : 'delta-neg'}`;
                     deltaEl.innerText = (delta > 0 ? '+' : '') + delta;
                     valContainer.appendChild(deltaEl);
-                    setTimeout(() => deltaEl.remove(), 1200); // 与动画时长一致
+                    setTimeout(() => deltaEl.remove(), 1200);
                 }
             }
         }

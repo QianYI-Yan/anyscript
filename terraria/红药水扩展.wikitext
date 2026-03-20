@@ -1,0 +1,463 @@
+===== 本文目前截至至''[[1.4.5.6]]''内容 =====
+----
+推荐使用配套的药水材料计算器<ref>[https://github.com/QianYI-Yan/anyscript/blob/main/terraria/药水材料计算.html GitHub仓库]</ref>喵
+== '''''[[红药水]]缺失的增益''''' ==
+:<big><big>'''''[[红药水]]'''''</big></big><big>作为</big>十分适合[[旅途]][[天顶世界]]的[[药水|饮料]]可以提供18种正面增益
+但是还有21(28)种增益<ref>原版共8种[[药剂|灌注药剂]]只能同时生效一种</ref>共计30种药水<ref>[[药剂|灌注药剂]]+[[幸运药水]]的8+3种</ref>没有在红药水中<ref>对于[[1.4.5.6]]来说
+</ref>
+=== 功能性药剂共计9(8+3)<ref>三瓶幸运药水</ref>种 ===
+需要材料
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">功能性药水列表</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+
+        {{recipes
+        |result = Builder Potion/Biome Sight Potion/Flipper Potion/Gills Potion/Gravitation Potion/Luck Potion/Night Owl Potion/Shine Potion/Water Walking Potion
+        |expectedrows = 9
+        |nostation = y
+        |sortable = y
+
+        |header-result = {{tr|Potion}}
+        |col-C-1 = {{tr|Type}}
+        |col-C-2 = {{tr|Effect}}
+        |col-C-3 = {{tr|Duration}}
+        |col-C-4 = {{tr|Tooltip}}
+        |col-C-5 = {{tr|Icon}}
+
+        |result-index-Builder Potion = d
+        |d-row-col-C-1 = 其他
+        |d-row-col-C-2 = 提高放置速度，放置范围扩展一格
+        |d-row-col-C-3 = {{iteminfo|Builder Potion|buff duration}}
+        |d-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Builder Potion}}}}
+        |d-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Builder Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Biome Sight Potion = biome
+        |biome-row-col-C-1 = 其他
+        |biome-row-col-C-2 = 分别以紫、红、和粉色高亮显示腐化、猩红、或神圣图格。
+        |biome-row-col-C-3 = {{iteminfo|Biome Sight Potion|buff duration}}
+        |biome-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Biome Sight Potion}}}}
+        |biome-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Biome Sight Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Flipper Potion = k
+        |k-row-col-C-1 = {{tr|Movement}}
+        |k-row-col-C-2 = 液体不再妨碍移动速度，且让玩家能够游泳。
+        |k-row-col-C-3 = {{iteminfo|Flipper Potion|buff duration}}
+        |k-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Flipper Potion}}}}
+        |k-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Flipper Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Gills Potion = l
+        |l-row-col-C-1 = 其他
+        |l-row-col-C-2 = 让玩家可以在水底呼吸，防止溺水。
+        |l-row-col-C-3 = {{iteminfo|Gills Potion|buff duration}}
+        |l-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Gills Potion}}}}
+        |l-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Gills Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Gravitation Potion = m
+        |m-row-col-C-1 = {{tr|Movement}}
+        |m-row-col-C-2 = 让玩家能用{{key|up}}逆转重力
+        |m-row-col-C-3 = {{iteminfo|Gravitation Potion|buff duration}}
+        |m-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Gravitation Potion}}}}
+        |m-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Gravitation Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Luck Potion = luck
+        |luck-row-col-C-1 = 其他
+        |luck-row-col-C-2 = 提高[[{{tr|luck}}]]。
+        |luck-row-col-C-3 = {{iteminfo|Luck Potion|buff duration}}
+        |luck-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Luck Potion}}}}
+        |luck-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Luck Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Night Owl Potion = x
+        |x-row-col-C-1 = 其他
+        |x-row-col-C-2 = 改善玩家的夜间视野并增加所有光源的光照半径。
+        |x-row-col-C-3 = {{iteminfo|Night Owl Potion|buff duration}}
+        |x-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Night Owl Potion}}}}
+        |x-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Night Owl Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Shine Potion = 1
+        |1-row-col-C-1 = {{tr|Mining}}
+        |1-row-col-C-2 = 使玩家发出明亮的光芒。
+        |1-row-col-C-3 = {{iteminfo|Shine Potion|buff duration}}
+        |1-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Shine Potion}}}}
+        |1-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Shine Potion|buff id}}|image}}|center|link=]]
+
+        |result-index-Water Walking Potion = aa
+        |aa-row-col-C-1 = {{tr|Movement}}
+        |aa-row-col-C-2 = 使玩家能在液体上行走。
+        |aa-row-col-C-3 = {{iteminfo|Water Walking Potion|buff duration}}
+        |aa-row-col-C-4 = {{itemTooltip|{{itemIdFromName|Water Walking Potion}}}}
+        |aa-row-col-C-5 = [[File:{{getBuffInfo|{{iteminfo|Water Walking Potion|buff id}}|image}}|center|link=]]
+        }}
+
+    </div>
+</div>
+
+=== 战斗用药剂总计5种 ===
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">战斗用药水列表</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+
+        {{recipes
+        |result = Ammo Reservation Potion/Summoning Potion/Thorns Potion/Titan Potion/Warmth Potion
+        |expectedrows = 5
+        |nostation = y
+        |sortable = y
+
+        |header-result = {{tr|Potion}}
+        |col-C-1 = {{tr|Type}}
+        |col-C-2 = {{tr|Effect}}
+        |col-C-3 = {{tr|Duration}}
+        |col-C-4 = {{tr|Tooltip}}
+        |col-C-5 = {{tr|Icon}}
+
+        |result-index-Ammo Reservation Potion = ammo
+        |ammo-row-col-C-1 = 战斗
+        |ammo-row-col-C-2 = 任意弹药的消耗几率降低 20%。
+        |ammo-row-col-C-3 = 8 分钟
+        |ammo-row-col-C-4 = 20%几率省下弹药
+        |ammo-row-col-C-5 = [[File:Ammo Reservation Potion.png|center|link=]]
+
+        |result-index-Summoning Potion = summon
+        |summon-row-col-C-1 = 召唤
+        |summon-row-col-C-2 = 仆从数量上限提高 1。
+        |summon-row-col-C-3 = 8 分钟
+        |summon-row-col-C-4 = 仆从数量上限增加1
+        |summon-row-col-C-5 = [[File:Summoning Potion.png|center|link=]]
+
+        |result-index-Thorns Potion = thorns
+        |thorns-row-col-C-1 = 战斗
+        |thorns-row-col-C-2 = 近战攻击者伤害玩家时也会承受少量伤害。
+        |thorns-row-col-C-3 = 8 分钟
+        |thorns-row-col-C-4 = 攻击者也会受到伤害
+        |thorns-row-col-C-5 = [[File:Thorns Potion.png|center|link=]]
+
+        |result-index-Titan Potion = titan
+        |titan-row-col-C-1 = 战斗
+        |titan-row-col-C-2 = 提高所有武器的击退力。
+        |titan-row-col-C-3 = 8 分钟
+        |titan-row-col-C-4 = 提高击退
+        |titan-row-col-C-5 = [[File:Titan Potion.png|center|link=]]
+
+        |result-index-Warmth Potion = warmth
+        |warmth-row-col-C-1 = 辅助
+        |warmth-row-col-C-2 = 减少来自冷系敌怪的伤害。
+        |warmth-row-col-C-3 = 15 分钟
+        |warmth-row-col-C-4 = 降低所受冷系伤害
+        |warmth-row-col-C-5 = [[File:Warmth Potion.png|center|link=]]
+        }}
+
+    </div>
+</div>
+
+=== 钓鱼药总计3种 ===
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">钓鱼药水列表</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+
+        {{recipes
+        |result = Crate Potion/Fishing Potion/Sonar Potion
+        |expectedrows = 3
+        |nostation = y
+        |sortable = y
+
+        |header-result = {{tr|Potion}}
+        |col-C-1 = {{tr|Type}}
+        |col-C-2 = {{tr|Effect}}
+        |col-C-3 = {{tr|Duration}}
+        |col-C-4 = {{tr|Tooltip}}
+        |col-C-5 = {{tr|Icon}}
+
+        |result-index-Crate Potion = crate
+        |crate-row-col-C-1 = 钓鱼
+        |crate-row-col-C-2 = 钓到宝匣的几率翻倍。
+        |crate-row-col-C-3 = 4 分钟
+        |crate-row-col-C-4 = 钓上宝匣的几率更大
+        |crate-row-col-C-5 = [[File:Crate Potion.png|center|link=]]
+
+        |result-index-Fishing Potion = fishing
+        |fishing-row-col-C-1 = 钓鱼
+        |fishing-row-col-C-2 = 渔力提高 15 点。
+        |fishing-row-col-C-3 = 8 分钟
+        |fishing-row-col-C-4 = 提高渔力
+        |fishing-row-col-C-5 = [[File:Fishing Potion.png|center|link=]]
+
+        |result-index-Sonar Potion = sonar
+        |sonar-row-col-C-1 = 钓鱼
+        |sonar-row-col-C-2 = 在钓鱼时显示渔获的名称。
+        |sonar-row-col-C-3 = 8 分钟
+        |sonar-row-col-C-4 = 你能看到是什么在咬你的鱼钩
+        |sonar-row-col-C-5 = [[File:Sonar Potion.png|center|link=]]
+        }}
+
+    </div>
+</div>
+
+=== 特殊功能药剂共2种 ===
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">特殊功能药水列表</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+
+        {{recipes
+        |result = Battle Potion/Calming Potion
+        |expectedrows = 2
+        |nostation = y
+        |sortable = y
+
+        |header-result = {{tr|Potion}}
+        |col-C-1 = {{tr|Type}}
+        |col-C-2 = {{tr|Effect}}
+        |col-C-3 = {{tr|Duration}}
+        |col-C-4 = {{tr|Tooltip}}
+        |col-C-5 = {{tr|Icon}}
+
+        |result-index-Battle Potion = battle
+        |battle-row-col-C-1 = 环境
+        |battle-row-col-C-2 = 提高敌怪和小动物的生成速度和屏幕上敌怪的最大数量。
+        |battle-row-col-C-3 = 7 分钟
+        |battle-row-col-C-4 = 提高敌人生成速度
+        |battle-row-col-C-5 = [[File:Battle Potion.png|center|link=]]
+
+        |result-index-Calming Potion = calming
+        |calming-row-col-C-1 = 环境
+        |calming-row-col-C-2 = 敌怪生成速度降低 17%。
+        |calming-row-col-C-3 = 12 分钟
+        |calming-row-col-C-4 = 敌人生成速度降低
+        |calming-row-col-C-5 = [[File:Calming Potion.png|center|link=]]
+        }}
+
+    </div>
+</div>
+
+=== 以及武器灌注药剂共1(+7)种<ref>同时只能生效一个的绝望</ref> ===
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">点击展开/折叠武器灌注药剂列表</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+
+        {{recipes
+        |result = Flask of Party/Flask of Cursed Flames/Flask of Fire/Flask of Gold/Flask of Ichor/Flask of Nanites/Flask of Poison/Flask of Venom
+        |expectedrows = 8
+        |nostation = y
+        |sortable = y
+
+        |header-result = {{tr|Potion}}
+        |col-C-1 = {{tr|Type}}
+        |col-C-2 = {{tr|Effect}}
+        |col-C-3 = {{tr|Duration}}
+        |col-C-4 = {{tr|Tooltip}}
+        |col-C-5 = {{tr|Icon}}
+
+        |result-index-Flask of Party = party
+        |party-row-col-C-1 = 灌注
+        |party-row-col-C-2 = 近战和鞭攻击会喷出彩纸。
+        |party-row-col-C-3 = 20 分钟
+        |party-row-col-C-4 = 近战攻击会喷撒彩纸
+        |party-row-col-C-5 = [[File:Flask of Party.png|center|link=]]
+
+        |result-index-Flask of Cursed Flames = cursed
+        |cursed-row-col-C-1 = 灌注
+        |cursed-row-col-C-2 = 近战和鞭攻击对敌怪造成诅咒狱火减益。
+        |cursed-row-col-C-3 = 20 分钟
+        |cursed-row-col-C-4 = 近战攻击会对敌人施放诅咒焰
+        |cursed-row-col-C-5 = [[File:Flask of Cursed Flames.png|center|link=]]
+
+        |result-index-Flask of Fire = fire
+        |fire-row-col-C-1 = 灌注
+        |fire-row-col-C-2 = 近战和鞭攻击对敌怪造成着火了！减益。
+        |fire-row-col-C-3 = 20 分钟
+        |fire-row-col-C-4 = 近战攻击会使敌人着火
+        |fire-row-col-C-5 = [[File:Flask of Fire.png|center|link=]]
+
+        |result-index-Flask of Gold = gold
+        |gold-row-col-C-1 = 灌注
+        |gold-row-col-C-2 = 近战和鞭攻击对敌怪造成迈达斯减益。
+        |gold-row-col-C-3 = 20 分钟
+        |gold-row-col-C-4 = 近战攻击会使敌人掉落更多金子
+        |gold-row-col-C-5 = [[File:Flask of Gold.png|center|link=]]
+
+        |result-index-Flask of Ichor = ichor
+        |ichor-row-col-C-1 = 灌注
+        |ichor-row-col-C-2 = 近战和鞭攻击对敌怪造成灵液减益。
+        |ichor-row-col-C-3 = 20 分钟
+        |ichor-row-col-C-4 = 近战攻击会降低敌人防御
+        |ichor-row-col-C-5 = [[File:Flask of Ichor.png|center|link=]]
+
+        |result-index-Flask of Nanites = nanites
+        |nanites-row-col-C-1 = 灌注
+        |nanites-row-col-C-2 = 近战和鞭攻击对敌怪造成困惑减益。
+        |nanites-row-col-C-3 = 20 分钟
+        |nanites-row-col-C-4 = 近战攻击会使敌人困惑
+        |nanites-row-col-C-5 = [[File:Flask of Nanites.png|center|link=]]
+
+        |result-index-Flask of Poison = poison
+        |poison-row-col-C-1 = 灌注
+        |poison-row-col-C-2 = 近战和鞭攻击对敌怪造成中毒减益。
+        |poison-row-col-C-3 = 20 分钟
+        |poison-row-col-C-4 = 近战攻击会使敌人中毒
+        |poison-row-col-C-5 = [[File:Flask of Poison.png|center|link=]]
+
+        |result-index-Flask of Venom = venom
+        |venom-row-col-C-1 = 灌注
+        |venom-row-col-C-2 = 近战和鞭攻击对敌怪造成酸性毒液减益。
+        |venom-row-col-C-3 = 20 分钟
+        |venom-row-col-C-4 = 近战攻击会对你的目标施放酸性毒液
+        |venom-row-col-C-5 = [[File:Flask of Venom.png|center|link=]]
+        }}
+
+    </div>
+</div>
+
+
+----
+
+== 红药水包含的增益<ref>针对于[[传奇]]和[[天顶世界]]</ref> ==
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">点击展开/折叠核心增强药水列表</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+
+        {{recipes
+        |result = Archery Potion/Dangersense Potion/Endurance Potion/Featherfall Potion/Heartreach Potion/Hunter Potion/Inferno Potion/Ironskin Potion/Lifeforce Potion/Magic Power Potion/Mana Regeneration Potion/Mining Potion/Obsidian Skin Potion/Rage Potion/Regeneration Potion/Spelunker Potion/Swiftness Potion/Wrath Potion
+        |expectedrows = 18
+        |nostation = y
+        |sortable = y
+
+        |header-result = {{tr|Potion}}
+        |col-C-1 = {{tr|Type}}
+        |col-C-2 = {{tr|Effect}}
+        |col-C-3 = {{tr|Duration}}
+        |col-C-4 = {{tr|Tooltip}}
+        |col-C-5 = {{tr|Icon}}
+
+        |result-index-Archery Potion = archery
+        |archery-row-col-C-1 = 战斗
+        |archery-row-col-C-2 = 箭的伤害和开火速度提高 20%。
+        |archery-row-col-C-3 = 8 分钟
+        |archery-row-col-C-4 = 弓伤害提高10%，箭速度提高20%
+        |archery-row-col-C-5 = [[File:Archery Potion.png|center|link=]]
+
+        |result-index-Danger Sense Potion = danger
+        |danger-row-col-C-1 = 探索
+        |danger-row-col-C-2 = 高亮标记危险物块和物体，比如陷阱。
+        |danger-row-col-C-3 = 10 分钟
+        |danger-row-col-C-4 = 你可以看到附近的危险
+        |danger-row-col-C-5 = [[File:Danger Sense Potion.png|center|link=]]
+
+        |result-index-Endurance Potion = endur
+        |endur-row-col-C-1 = 战斗
+        |endur-row-col-C-2 = 所受的所有伤害减少 10%。
+        |endur-row-col-C-3 = 4 分钟
+        |endur-row-col-C-4 = 所受伤害降低10%
+        |endur-row-col-C-5 = [[File:Endurance Potion.png|center|link=]]
+
+        |result-index-Featherfall Potion = feather
+        |feather-row-col-C-1 = 移动
+        |feather-row-col-C-2 = 允许玩家控制下落速度，并抵消掉落伤害。
+        |feather-row-col-C-3 = 10 分钟
+        |feather-row-col-C-4 = 按向上键或向下键来控制下降速度
+        |feather-row-col-C-5 = [[File:Featherfall Potion.png|center|link=]]
+
+        |result-index-Heartreach Potion = heart
+        |heart-row-col-C-1 = 辅助
+        |heart-row-col-C-2 = 增加心的拾取范围。
+        |heart-row-col-C-3 = 8 分钟
+        |heart-row-col-C-4 = 扩大心的拾取范围
+        |heart-row-col-C-5 = [[File:Heartreach Potion.png|center|link=]]
+
+        |result-index-Hunter Potion = hunter
+        |hunter-row-col-C-1 = 探索
+        |hunter-row-col-C-2 = 高亮标记屏幕中的所有敌怪。
+        |hunter-row-col-C-3 = 8 分钟
+        |hunter-row-col-C-4 = 显示敌人位置
+        |hunter-row-col-C-5 = [[File:Hunter Potion.png|center|link=]]
+
+        |result-index-Inferno Potion = inferno
+        |inferno-row-col-C-1 = 战斗
+        |inferno-row-col-C-2 = 在玩家周围投下一层造成伤害的火环。
+        |inferno-row-col-C-3 = 4 分钟
+        |inferno-row-col-C-4 = 附近的敌人被点燃
+        |inferno-row-col-C-5 = [[File:Inferno Potion.png|center|link=]]
+
+        |result-index-Ironskin Potion = iron
+        |iron-row-col-C-1 = 战斗
+        |iron-row-col-C-2 = 防御提升 8。
+        |iron-row-col-C-3 = 8 分钟
+        |iron-row-col-C-4 = 防御增加8
+        |iron-row-col-C-5 = [[File:Ironskin Potion.png|center|link=]]
+
+        |result-index-Lifeforce Potion = life
+        |life-row-col-C-1 = 战斗
+        |life-row-col-C-2 = 最大生命值提升 20%。
+        |life-row-col-C-3 = 8 分钟
+        |life-row-col-C-4 = 最大生命值提高20%
+        |life-row-col-C-5 = [[File:Lifeforce Potion.png|center|link=]]
+
+        |result-index-Magic Power Potion = mpower
+        |mpower-row-col-C-1 = 战斗
+        |mpower-row-col-C-2 = 魔法伤害提升 20%。
+        |mpower-row-col-C-3 = 4 分钟
+        |mpower-row-col-C-4 = 魔法伤害提高20%
+        |mpower-row-col-C-5 = [[File:Magic Power Potion.png|center|link=]]
+
+        |result-index-Mana Regeneration Potion = mregen
+        |mregen-row-col-C-1 = 战斗
+        |mregen-row-col-C-2 = 提高魔力再生。
+        |mregen-row-col-C-3 = 8 分钟
+        |mregen-row-col-C-4 = 提高魔力再生速度
+        |mregen-row-col-C-5 = [[File:Mana Regeneration Potion.png|center|link=]]
+
+        |result-index-Mining Potion = mine
+        |mine-row-col-C-1 = 挖矿
+        |mine-row-col-C-2 = 增加挖矿速度。
+        |mine-row-col-C-3 = 10 分钟
+        |mine-row-col-C-4 = 挖矿速度提高25%
+        |mine-row-col-C-5 = [[File:Mining Potion.png|center|link=]]
+
+        |result-index-Obsidian Skin Potion = obsidian
+        |obsidian-row-col-C-1 = 辅助
+        |obsidian-row-col-C-2 = 给予对来自熔岩的伤害的抵抗力。
+        |obsidian-row-col-C-3 = 6 分钟
+        |obsidian-row-col-C-4 = 对熔岩免疫
+        |obsidian-row-col-C-5 = [[File:Obsidian Skin Potion.png|center|link=]]
+
+        |result-index-Rage Potion = rage
+        |rage-row-col-C-1 = 战斗
+        |rage-row-col-C-2 = 暴击率增加 10%。
+        |rage-row-col-C-3 = 4 分钟
+        |rage-row-col-C-4 = 暴击率提高10%
+        |rage-row-col-C-5 = [[File:Rage Potion.png|center|link=]]
+
+        |result-index-Regeneration Potion = regen
+        |regen-row-col-C-1 = 战斗
+        |regen-row-col-C-2 = 生命再生每秒增加 2 点生命值。
+        |regen-row-col-C-3 = 8 分钟
+        |regen-row-col-C-4 = 提供生命再生
+        |regen-row-col-C-5 = [[File:Regeneration Potion.png|center|link=]]
+
+        |result-index-Spelunker Potion = spelunker
+        |spelunker-row-col-C-1 = 探索
+        |spelunker-row-col-C-2 = 高亮标记矿石、宝箱、和其他宝藏。
+        |spelunker-row-col-C-3 = 5 分钟
+        |spelunker-row-col-C-4 = 显示宝藏和矿石的位置
+        |spelunker-row-col-C-5 = [[File:Spelunker Potion.png|center|link=]]
+
+        |result-index-Swiftness Potion = swift
+        |swift-row-col-C-1 = 移动
+        |swift-row-col-C-2 = 移动速度提高25%。
+        |swift-row-col-C-3 = 8 分钟
+        |swift-row-col-C-4 = 移动速度提高25%
+        |swift-row-col-C-5 = [[File:Swiftness Potion.png|center|link=]]
+
+        |result-index-Wrath Potion = wrath
+        |wrath-row-col-C-1 = 战斗
+        |wrath-row-col-C-2 = 武器造成的伤害增加10%。
+        |wrath-row-col-C-3 = 4 分钟
+        |wrath-row-col-C-4 = 伤害提高10%
+        |wrath-row-col-C-5 = [[File:Wrath Potion.png|center|link=]]
+        }}
+
+    </div>
+</div>
