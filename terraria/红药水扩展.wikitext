@@ -6,7 +6,7 @@
 但是还有21(28)种增益<ref>原版共8种[[药剂|灌注药剂]]只能同时生效一种</ref>共计30种药水<ref>[[药剂|灌注药剂]]+[[幸运药水]]的8+3种</ref>没有在红药水中<ref>对于[[1.4.5.6]]来说
 </ref>
 === 功能性药剂共计9(8+3)<ref>三瓶幸运药水</ref>种 ===
-需要材料
+维持一个小时大约需要
 <div class="mw-collapsible mw-collapsed"
     style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
     <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">功能性药水列表</div>
@@ -234,7 +234,7 @@
 === 以及武器灌注药剂共1(+7)种<ref>同时只能生效一个的绝望</ref> ===
 <div class="mw-collapsible mw-collapsed"
     style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
-    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">点击展开/折叠武器灌注药剂列表</div>
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">武器灌注药剂列表</div>
     <div class="mw-collapsible-content" style="margin-top: 5px;">
 
         {{recipes
@@ -314,9 +314,16 @@
 ----
 
 == 红药水包含的增益<ref>针对于[[传奇]]和[[天顶世界]]</ref> ==
+一千万次模拟下的红药水期望
+🔹 平均需要：21.2993 瓶   
+🔹 50% 满增益需要：20 瓶
+🔹 95% 满增益需要：35 瓶
+🍀 最少：6 瓶     
+💀 最多：110 瓶 
+
 <div class="mw-collapsible mw-collapsed"
     style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
-    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">点击展开/折叠核心增强药水列表</div>
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">红药水增益列表</div>
     <div class="mw-collapsible-content" style="margin-top: 5px;">
 
         {{recipes
@@ -459,5 +466,109 @@
         |wrath-row-col-C-5 = [[File:Wrath Potion.png|center|link=]]
         }}
 
+    </div>
+</div>
+
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">红药水满增益36分钟相当于</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+{| class="wikitable"
+! 药水名称 !! 制作瓶数 !! 材料总计
+|-
+| {{item|Archery Potion|箭术药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Daybloom|太阳花}} x5, {{item|Lens|晶状体}} x5
+|-
+| {{item|Endurance Potion|耐力药水}} || 9 瓶 || {{item|Bottled Water|瓶装水}} x9, {{item|Armored Cavefish|装甲洞穴鱼}} x9, {{item|Blinkroot|闪耀根}} x9
+|-
+| {{item|Inferno Potion|狱火药水}} || 9 瓶 || {{item|Bottled Water|瓶装水}} x9, {{item|Fireblossom|火焰花}} x9, {{item|Obsidifish|黑曜石鱼}} x9, {{item|Flarefin Koi|闪鳍锦鲤}} x9
+|-
+| {{item|Ironskin Potion|铁皮药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Daybloom|太阳花}} x5, {{item|Iron Ore|铁矿}} x5
+|-
+| {{item|Lifeforce Potion|生命力药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Daybloom|太阳花}} x5, {{item|Waterleaf|水叶草}} x5, {{item|Prismite|七彩碎鱼}} x5
+|-
+| {{item|Magic Power Potion|魔能药水}} || 9 瓶 || {{item|Bottled Water|瓶装水}} x9, {{item|Moonglow|月光草}} x9, {{item|Deathweed|死亡草}} x9, {{item|Fallen Star|堕落之星}} x9
+|-
+| {{item|Mana Regeneration Potion|魔力再生药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Moonglow|月光草}} x5, {{item|Daybloom|太阳花}} x5, {{item|Fallen Star|堕落之星}} x5
+|-
+| {{item|Wrath Potion|暴怒药水}} || 9 瓶 || {{item|Bottled Water|瓶装水}} x9, {{item|Hemopiranha|血腥食人鱼}} x9, {{item|Deathweed|死亡草}} x9
+|-
+| {{item|Regeneration Potion|再生药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Daybloom|太阳花}} x5, {{item|Mushroom|蘑菇}} x5
+|-
+| {{item|Rage Potion|怒气药水}} || 9 瓶 || {{item|Bottled Water|瓶装水}} x9, {{item|Ebonkoi|黑檀锦鲤}} x9, {{item|Deathweed|死亡草}} x9
+|-
+| {{item|Dangersense Potion|危险感药水}} || 4 瓶 || {{item|Bottled Water|瓶装水}} x4, {{item|Blinkroot|闪耀根}} x4, {{item|Cobweb|蛛网}} x40
+|-
+| {{item|Hunter Potion|狩猎药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Daybloom|太阳花}} x5, {{item|Blinkroot|闪耀根}} x5, {{item|Shark Fin|鲨鱼鳍}} x5
+|-
+| {{item|Spelunker Potion|洞穴探险药水}} || 8 瓶 || {{item|Bottled Water|瓶装水}} x8, {{item|Blinkroot|闪耀根}} x8, {{item|Moonglow|月光草}} x8, {{item|Gold Ore|金矿}} x8
+|-
+| {{item|Featherfall Potion|羽落药水}} || 4 瓶 || {{item|Bottled Water|瓶装水}} x4, {{item|Daybloom|太阳花}} x4, {{item|Blinkroot|闪耀根}} x4, {{item|Feather|羽毛}} x4
+|-
+| {{item|Swiftness Potion|敏捷药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Blinkroot|闪耀根}} x5, {{item|Cactus|仙人掌}} x5
+|-
+| {{item|Heartreach Potion|拾心药水}} || 5 瓶 || {{item|Bottled Water|瓶装水}} x5, {{item|Crimson Tigerfish|猩红虎鱼}} x5, {{item|Daybloom|太阳花}} x5
+|-
+| {{item|Obsidian Skin Potion|黑曜石皮药水}} || 6 瓶 || {{item|Bottled Water|瓶装水}} x6, {{item|Fireblossom|火焰花}} x6, {{item|Waterleaf|水叶草}} x6, {{item|Obsidian|黑曜石}} x6
+|-
+| {{item|Mining Potion|挖矿药水}} || 4 瓶 || {{item|Bottled Water|瓶装水}} x4, {{item|Antlion Mandible|蚁狮上颚}} x4, {{item|Blinkroot|闪耀根}} x4
+|}
+    </div>
+</div>
+
+<div class="mw-collapsible mw-collapsed"
+    style="display: inline-block; min-width: 250px; border: 1px solid #7a5a4d; border-radius: 4px; background: rgba(0,0,0,0.1); padding: 5px;">
+    <div style="font-weight:bold; line-height:1.6; cursor:pointer; padding: 0 35px 0 10px;">总相当材料</div>
+    <div class="mw-collapsible-content" style="margin-top: 5px;">
+{{item|Bottled Water|瓶装水}} x111
+
+{{item|Blinkroot|闪耀根}} x35
+
+{{item|Daybloom|太阳花}} x34
+
+{{item|Deathweed|死亡草}} x27
+
+{{item|Moonglow|月光草}} x27
+
+{{item|Fireblossom|火焰花}} x15
+
+{{item|Waterleaf|水叶草}} x11
+
+{{item|Shiverthorn|寒颤棘}} x9
+
+{{item|Cobweb|蛛网}} x40
+
+{{item|Obsidifish|黑曜石鱼}} x18
+
+{{item|Fallen Star|堕落之星}} x14
+
+{{item|Armored Cavefish|装甲洞穴鱼}} x9
+
+{{item|Flarefin Koi|闪鳍锦鲤}} x9
+
+{{item|Hemopiranha|血腥食人鱼}} x9
+
+{{item|Ebonkoi|黑檀锦鲤}} x9
+
+{{item|Gold Ore|金矿}} x8
+
+{{item|Obsidian|黑曜石}} x6
+
+{{item|Prismite|七彩碎鱼}} x5
+
+{{item|Crimson Tigerfish|猩红虎鱼}} x5
+
+{{item|Shark Fin|鲨鱼鳍}} x5
+
+{{item|Mushroom|蘑菇}} x5
+
+{{item|Lens|晶状体}} x5
+
+{{item|Iron Ore|铁矿}} x5
+
+{{item|Cactus|仙人掌}} x5
+
+{{item|Feather|羽毛}} x4
+
+{{item|Antlion Mandible|蚁狮上颚}} x4
     </div>
 </div>
